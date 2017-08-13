@@ -108,8 +108,8 @@ class Movement_Locations {
         
         // Load admin files.
         if ( is_admin() ) {
-//        require_once ( 'includes/class-menu.php' );
-//        $this->menu = Locations_Admin_Section::instance();
+        require_once ( 'includes/admin-menu.php' );
+        $this->menu = Locations_Tools_Menu::instance();
         
         require_once ( 'includes/locations-post-type.php' );
         $this->post_type = Locations_Post_Type::instance();

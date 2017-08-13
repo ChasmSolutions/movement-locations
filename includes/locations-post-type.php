@@ -112,7 +112,7 @@ class Locations_Post_Type {
                 add_action( 'manage_posts_custom_column', [ $this, 'register_custom_columns' ], 10, 2 );
             }
 
-            add_action( 'admin_init', [$this, 'remove_add_new_submenu'] );
+//            add_action( 'admin_init', [$this, 'remove_add_new_submenu'] );
         }
 
     } // End __construct()

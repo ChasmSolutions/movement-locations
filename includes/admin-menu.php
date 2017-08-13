@@ -58,7 +58,7 @@ class Locations_Tools_Menu {
      * Load Admin menu into Settings
      */
     public function load_admin_menu_item () {
-        add_submenu_page( 'edit.php?post_type=locations', __( 'Import', 'disciple_tools' ), __( 'Import', 'disciple_tools' ), 'manage_options', 'disciple_tools_locations', [ $this, 'page_content' ] );
+        add_submenu_page( 'edit.php?post_type=locations', __( 'Settings', 'disciple_tools' ), __( 'Settings', 'disciple_tools' ), 'manage_options', 'movement_locations', [ $this, 'page_content' ] );
     }
 
     /**
@@ -68,7 +68,6 @@ class Locations_Tools_Menu {
      */
     public function page_content() {
 
-
         if ( !current_user_can( 'manage_options' ) )  {
             wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
         }
@@ -77,22 +76,22 @@ class Locations_Tools_Menu {
          * Begin Header & Tab Bar
          */
         if (isset( $_GET["tab"] )) {$tab = $_GET["tab"];
-        } else {$tab = 'import';}
+        } else {$tab = 'settings';}
 
-        $tab_link_pre = '<a href="edit.php?post_type=locations&page=disciple_tools_locations&tab=';
+        $tab_link_pre = '<a href="edit.php?post_type=locations&page=movement_locations&tab=';
         $tab_link_post = '" class="nav-tab ';
 
         $html = '<div class="wrap">
-            <h2>Import Locations</h2>
+            <h2>Locations Settings</h2>
             <h2 class="nav-tab-wrapper">';
 
-        $html .= $tab_link_pre . 'import' . $tab_link_post;
-        if ($tab == 'import' || !isset( $tab )) {$html .= 'nav-tab-active';}
-        $html .= '">Import</a>';
+        $html .= $tab_link_pre . 'settings' . $tab_link_post;
+        if ($tab == 'settings' || !isset( $tab )) {$html .= 'nav-tab-active';}
+        $html .= '">Settings</a>';
 
-        $html .= $tab_link_pre . 'address_tract' . $tab_link_post;
-        if ($tab == 'address_tract' ) {$html .= 'nav-tab-active';}
-        $html .= '">USA Tract Search</a>';
+        $html .= $tab_link_pre . 'sync' . $tab_link_post;
+        if ($tab == 'sync' ) {$html .= 'nav-tab-active';}
+        $html .= '">Sync</a>';
     
         $html .= $tab_link_pre . 'stats' . $tab_link_post;
         if ($tab == 'stats' ) {$html .= 'nav-tab-active';}
@@ -110,18 +109,11 @@ class Locations_Tools_Menu {
          */
         switch ($tab) {
 
-            case "address_tract":
-                $class_object = new Disciple_Tools_Locations_USA_Tract_Lookup();
-                $html .= '' . $class_object->page_contents();
+            case "sync":
                 break;
             case "stats":
-                require_once 'admin-tab-stats.php';
-                $class_object = new Disciple_Tools_Locations_Stats();
-                $html .= '' . $class_object->page_contents();
                 break;
             default:
-                $class_object = new Disciple_Tools_Locations_Tab_Import();
-                $html .= '' . $class_object->page_contents();
                 break;
         }
 
