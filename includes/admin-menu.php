@@ -110,8 +110,19 @@ class Locations_Tools_Menu {
         switch ($tab) {
 
             case "sync":
+                require_once ( 'admin-tab-sync.php' );
+                $class_object = new Locations_Tab_Sync();
+                $html .= '' . $class_object->page_contents();
                 break;
             case "stats":
+                require_once ( 'admin-tab-stats.php' );
+                $class_object = new Locations_Tab_Stats();
+                $html .= '' . $class_object->page_contents();
+                break;
+            case "settings":
+                require_once ( 'admin-tab-settings.php' );
+                $class_object = new Locations_Tab_Settings();
+                $html .= '' . $class_object->page_contents();
                 break;
             default:
                 break;

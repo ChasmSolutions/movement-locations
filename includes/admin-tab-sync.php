@@ -12,7 +12,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly
 
-class Locations_Tab_Stats
+class Locations_Tab_Sync
 {
     
     /**
@@ -23,7 +23,7 @@ class Locations_Tab_Stats
         
         $html = '';
         
-        $html .= '<div class="wrap"><h2>Stats</h2>'; // Block title
+        $html .= '<div class="wrap"><h2>Sync</h2>'; // Block title
         
         $html .= '<div class="wrap"><div id="poststuff"><div id="post-body" class="metabox-holder columns-2">';
         $html .= '<div id="post-body-content">';
