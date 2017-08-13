@@ -23,10 +23,10 @@ class Locations_Tab_Stats
         
         $html = '';
         
-        $html .= '<div class="wrap"><h2>Stats</h2>'; // Block title
-        
         $html .= '<div class="wrap"><div id="poststuff"><div id="post-body" class="metabox-holder columns-2">';
         $html .= '<div id="post-body-content">';
+        $html .= $this->stats_box().'';
+        
         
         $html .= '</div><!-- end post-body-content --><div id="postbox-container-1" class="postbox-container">';
         
@@ -37,6 +37,31 @@ class Locations_Tab_Stats
         
         return $html;
         
+    }
+    
+    public function stats_box () {
+        $html = '';
+    
+        $html .= '<table class="widefat striped">
+                    <thead><th>Stats</th></thead>
+                    <tbody><tr><td>';
+        
+        $country_stats = ml_get_country_stats ();
+        foreach ( $country_stats as $key => $value ) {
+            $html .= $key . ': ' . $value . '<br>';
+        }
+        
+        $html .= '</td></tr><tr><td>';
+        
+        print $html;
+    
+        print '<pre>'; print_r(ml_get_admin_tree ()); print '</pre>';
+        
+        $html = '';
+        
+        $html .= '</td></tr></tbody></table>';
+        
+        print $html;
     }
     
 }

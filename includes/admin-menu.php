@@ -120,9 +120,10 @@ class Locations_Tools_Menu {
                 $html .= '' . $class_object->page_contents();
                 break;
             case "settings":
-                require_once ( 'admin-tab-settings.php' );
-                $class_object = new Locations_Tab_Settings();
-                $html .= '' . $class_object->page_contents();
+                require_once ( 'locations-table.php' );
+                locations_render_list_page();
+                
+                $html .= '';
                 break;
             default:
                 break;

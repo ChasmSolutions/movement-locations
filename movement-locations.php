@@ -105,7 +105,6 @@ class Movement_Locations {
         $this->token 			= 'movement_locations';
         $this->version 			= '1.0';
         
-        
         // Load admin files.
         if ( is_admin() ) {
         require_once ( 'includes/admin-menu.php' );
@@ -113,9 +112,15 @@ class Movement_Locations {
         
         require_once ( 'includes/locations-post-type.php' );
         $this->post_type = Locations_Post_Type::instance();
-//
+        
+        require_once ( 'includes/locations-template.php' );
+        Locations_Post_Type::instance();
+    
+        
         }
     }
+    
+    
     
     /**
      * Magic method to output a string if trying to use the object as a string.
