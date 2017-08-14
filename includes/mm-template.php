@@ -16,12 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly.
 function ml_get_country_stats () {
     global $wpdb;
     
-    $count['total_rows'] = $wpdb->get_var("SELECT count(*) as count FROM omegazone;");
-    $count['total_admin0'] = $wpdb->get_var("SELECT count(*) FROM omegazone WHERE WorldID LIKE '___';");
-    $count['total_admin1'] = $wpdb->get_var("SELECT count(*) FROM omegazone WHERE WorldID LIKE '___-___';");
-    $count['total_admin2'] = $wpdb->get_var("SELECT count(*) FROM omegazone WHERE WorldID LIKE '___-___-___';");
-    $count['total_admin3'] = $wpdb->get_var("SELECT count(*) FROM omegazone WHERE WorldID LIKE '___-___-___-___';");
-    $count['total_admin4'] = $wpdb->get_var("SELECT count(*) FROM omegazone WHERE WorldID LIKE '___-___-___-___-___';");
+    $count['total_rows'] = $wpdb->get_var("SELECT count(*) as count FROM $wpdb->mm;");
+    $count['total_admin0'] = $wpdb->get_var("SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___';");
+    $count['total_admin1'] = $wpdb->get_var("SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___';");
+    $count['total_admin2'] = $wpdb->get_var("SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___-___';");
+    $count['total_admin3'] = $wpdb->get_var("SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___-___-___';");
+    $count['total_admin4'] = $wpdb->get_var("SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___-___-___-___';");
     
     $stats = array(
         'Total Rows' => number_format( $count['total_rows'] ),
@@ -44,17 +44,17 @@ function ml_get_admin_tree () {
     
     $tree = array();
     
-    $countries = $wpdb->get_results("SELECT CntyID, Cnty_Name FROM omegazone WHERE WorldID LIKE '___';");
+    $countries = $wpdb->get_results("SELECT CntyID, Cnty_Name FROM $wpdb->mm WHERE WorldID LIKE '___';");
     foreach ( $countries as $country ) {
         
         $CntyID = $country->CntyID;
         $Cnty_Name = $country->Cnty_Name;
         
         $tree[ $Cnty_Name ] = array(
-            'admin1' => $wpdb->get_var("SELECT count(*) FROM omegazone WHERE WorldID LIKE '___-___' AND CntyID = '$CntyID';"),
-            'admin2' => $wpdb->get_var("SELECT count(*) FROM omegazone WHERE WorldID LIKE '___-___-___' AND CntyID = '$CntyID';"),
-            'admin3' => $wpdb->get_var("SELECT count(*) FROM omegazone WHERE WorldID LIKE '___-___-___-___' AND CntyID = '$CntyID';"),
-            'admin4' => $wpdb->get_var("SELECT count(*) FROM omegazone WHERE WorldID LIKE '___-___-___-___-___' AND CntyID = '$CntyID';"),
+            'admin1' => $wpdb->get_var("SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___' AND CntyID = '$CntyID';"),
+            'admin2' => $wpdb->get_var("SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___-___' AND CntyID = '$CntyID';"),
+            'admin3' => $wpdb->get_var("SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___-___-___' AND CntyID = '$CntyID';"),
+            'admin4' => $wpdb->get_var("SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___-___-___-___' AND CntyID = '$CntyID';"),
         );
     }
     

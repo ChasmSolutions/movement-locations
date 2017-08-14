@@ -92,8 +92,11 @@ class Movement_Mapping {
      * @return void
      */
     private function __construct() {
+        global $wpdb;
         
         $this->setup_actions();
+    
+        $wpdb->mm = $wpdb->prefix . 'mm';
     
         // Main plugin directory path and URI.
         $this->dir_path     = trailingslashit( plugin_dir_path( __FILE__ ) );
