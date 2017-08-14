@@ -12,7 +12,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly
 
-class Disciple_Tools_Locations_Endpoints {
+class MM_Endpoints {
 
     private $version = 1;
     private $context = "dt";

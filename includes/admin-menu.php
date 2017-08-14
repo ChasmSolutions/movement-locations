@@ -12,12 +12,12 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly
 
-class Locations_Tools_Menu {
+class MM_Admin_Menu {
 
     public $path;
 
     /**
-     * Disciple_Tools The single instance of Disciple_Tools.
+     * MM_Admin_Menu The single instance of MM_Admin_Menu.
      *
      * @var    object
      * @access private
@@ -26,14 +26,13 @@ class Locations_Tools_Menu {
     private static $_instance = null;
 
     /**
-     * Main Disciple_Tools_Tabs Instance
+     * Main MM_Admin_Menu Instance
      *
-     * Ensures only one instance of Disciple_Tools_Tabs is loaded or can be loaded.
+     * Ensures only one instance of MM_Admin_Menu is loaded or can be loaded.
      *
      * @since  0.1
      * @static
-     * @see    Disciple_Tools()
-     * @return Locations_Tools_Menu instance
+     * @return MM_Admin_Menu instance
      */
     public static function instance () {
         if ( is_null( self::$_instance ) ) {
@@ -58,7 +57,8 @@ class Locations_Tools_Menu {
      * Load Admin menu into Settings
      */
     public function load_admin_menu_item () {
-        add_submenu_page( 'edit.php?post_type=locations', __( 'Settings', 'movement_mapping' ), __( 'Settings', 'movement_mapping' ), 'manage_options', 'movement_locations', [ $this, 'page_content' ] );
+        add_menu_page( __('Movement Mapping', 'movement_mapping'), __('Movement Mapping', 'movement_mapping'), 'manage_options', 'movement_mapping', [ $this, 'page_content'], 'dashicons-admin-site', '6' );
+        add_submenu_page( 'movement_mapping', __( 'Table', 'movement_mapping' ), __( 'Table', 'movement_mapping' ), 'manage_options', 'movement_locations', [ $this, 'mm_table_page' ] );
     }
 
     /**
@@ -111,19 +111,18 @@ class Locations_Tools_Menu {
 
             case "sync":
                 require_once ( 'admin-tab-sync.php' );
-                $class_object = new Locations_Tab_Sync();
+                $class_object = new MM_Admin_Tab_Sync ();
                 $html .= '' . $class_object->page_contents();
                 break;
             case "stats":
                 require_once ( 'admin-tab-stats.php' );
-                $class_object = new Locations_Tab_Stats();
+                $class_object = new MM_Admin_Tab_Stats();
                 $html .= '' . $class_object->page_contents();
                 break;
             case "settings":
-                require_once( 'mm-table.php' );
-                locations_render_list_page();
-                
-                $html .= '';
+                require_once ( 'admin-tab-settings.php' );
+                $class_object = new MM_Admin_Tab_Settings();
+                $html .= '' . $class_object->page_contents();
                 break;
             default:
                 break;
@@ -132,5 +131,33 @@ class Locations_Tools_Menu {
         $html .= '</div>'; // end div class wrap
 
         echo $html; // Echo contents
+    }
+    
+    /**
+     * Display Table List
+     */
+    public function mm_table_page (){
+    
+        require_once( 'mm-table.php' );
+        $ListTable = new MM_Table();
+        //Fetch, prepare, sort, and filter our data...
+        $ListTable->prepare_items();
+        
+        ?>
+        <div class="wrap">
+            
+            <div id="icon-users" class="icon32"><br/></div>
+            <h2>Movement Mapping Table</h2>
+            
+            <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
+            <form id="movies-filter" method="get">
+                <!-- For plugins, we also need to ensure that the form posts back to our current page -->
+                <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+                <!-- Now we can render the completed list table -->
+                <?php $ListTable->display() ?>
+            </form>
+        
+        </div>
+        <?php
     }
 }

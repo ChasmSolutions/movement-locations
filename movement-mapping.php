@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 class Movement_Mapping {
     
+    public $mm_table;
     /**
      * The token.
      * @var     string
@@ -108,7 +109,9 @@ class Movement_Mapping {
         // Load admin files.
         if ( is_admin() ) {
         require_once ( 'includes/admin-menu.php' );
-        $this->menu = Locations_Tools_Menu::instance();
+        $this->menu = MM_Admin_Menu::instance();
+    
+        
         
         } // if admin
         require_once( 'includes/mm-template.php' );

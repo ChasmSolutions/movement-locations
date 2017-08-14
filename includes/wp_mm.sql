@@ -1,14 +1,10 @@
-<?php
-
-// TODO: convert wp_mm.sql to an activation script
-
 /*
  Target Server Type    : MySQL
  Target Server Version : 50635
  File Encoding         : utf-8
 
  Date: 08/14/2017 15:45:28 PM
-
+*/
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -18,7 +14,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `wp_mm`;
 CREATE TABLE `wp_mm` (
-`WorldID` varchar(255) NOT NULL,
+  `WorldID` varchar(255) NOT NULL,
   `Zone_Name` varchar(255) DEFAULT NULL,
   `CntyID` varchar(255) DEFAULT NULL,
   `Cnty_Name` varchar(255) DEFAULT NULL,

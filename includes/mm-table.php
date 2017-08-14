@@ -6,7 +6,7 @@ if(!class_exists('WP_List_Table')){
 }
 
 
-class Locations_OZ_Table extends WP_List_Table {
+class MM_Table extends WP_List_Table {
     
     var $example_data = array(
         array(
@@ -193,35 +193,4 @@ class Locations_OZ_Table extends WP_List_Table {
     }
     
     
-}
-
-function locations_add_menu_items(){
-    add_submenu_page( 'edit.php?post_type=locations', __( 'OZ List', 'movement_mapping' ), __( 'OZ List', 'movement_mapping' ), 'manage_options', 'movement_locations', 'locations_render_list_page' );
-}
-add_action('admin_menu', 'locations_add_menu_items');
-
-
-function locations_render_list_page(){
-    
-    //Create an instance of our package class...
-    $ListTable = new Locations_OZ_Table();
-    //Fetch, prepare, sort, and filter our data...
-    $ListTable->prepare_items();
-    
-    ?>
-    <div class="wrap">
-        
-        <div id="icon-users" class="icon32"><br/></div>
-        <h2>List Table</h2>
-        
-        <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
-        <form id="movies-filter" method="get">
-            <!-- For plugins, we also need to ensure that the form posts back to our current page -->
-            <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-            <!-- Now we can render the completed list table -->
-            <?php $ListTable->display() ?>
-        </form>
-    
-    </div>
-    <?php
 }

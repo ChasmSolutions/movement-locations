@@ -12,7 +12,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly
 
-class Locations_Tab_Stats
+class MM_Admin_Tab_Stats
 {
     
     /**
