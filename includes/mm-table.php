@@ -196,7 +196,7 @@ class Locations_OZ_Table extends WP_List_Table {
 }
 
 function locations_add_menu_items(){
-    add_submenu_page( 'edit.php?post_type=locations', __( 'OZ List', 'disciple_tools' ), __( 'OZ List', 'disciple_tools' ), 'manage_options', 'movement_locations', 'locations_render_list_page' );
+    add_submenu_page( 'edit.php?post_type=locations', __( 'OZ List', 'movement_mapping' ), __( 'OZ List', 'movement_mapping' ), 'manage_options', 'movement_locations', 'locations_render_list_page' );
 }
 add_action('admin_menu', 'locations_add_menu_items');
 

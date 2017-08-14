@@ -58,7 +58,7 @@ class Locations_Tools_Menu {
      * Load Admin menu into Settings
      */
     public function load_admin_menu_item () {
-        add_submenu_page( 'edit.php?post_type=locations', __( 'Settings', 'disciple_tools' ), __( 'Settings', 'disciple_tools' ), 'manage_options', 'movement_locations', [ $this, 'page_content' ] );
+        add_submenu_page( 'edit.php?post_type=locations', __( 'Settings', 'movement_mapping' ), __( 'Settings', 'movement_mapping' ), 'manage_options', 'movement_locations', [ $this, 'page_content' ] );
     }
 
     /**
@@ -120,7 +120,7 @@ class Locations_Tools_Menu {
                 $html .= '' . $class_object->page_contents();
                 break;
             case "settings":
-                require_once ( 'locations-table.php' );
+                require_once( 'mm-table.php' );
                 locations_render_list_page();
                 
                 $html .= '';

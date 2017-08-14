@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plugin Name: Movement Locations (Private)
- * Plugin URI: https://github.com/ChasmSolutions/movement_locations_api
- * Description: Locations API for serving country based mapping to disciple tools.
+ * Plugin Name: Movement Mapping (Private)
+ * Plugin URI: https://github.com/ChasmSolutions/movement_mapping
+ * Description: Movement Mapping API for serving country based mapping to disciple tools.
  * Version: 1.0
  * Author: Chasm.Solutions & Kingdom.Training
  * Author URI: https://github.com/ChasmSolutions
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * @since  1.0
  * @access public
  */
-class Movement_Locations {
+class Movement_Mapping {
     
     /**
      * The token.
@@ -61,7 +61,7 @@ class Movement_Locations {
     public $img_uri = '';
     
     /**
-     * Movement_Locations The single instance of Movement_Locations.
+     * Movement_Mapping The single instance of Movement_Mapping.
      * @var 	object
      * @access  private
      * @since 	0.1
@@ -69,13 +69,13 @@ class Movement_Locations {
     private static $_instance = null;
     
     /**
-     * Main Movement_Locations Instance
+     * Main Movement_Mapping Instance
      *
-     * Ensures only one instance of Movement_Locations is loaded or can be loaded.
+     * Ensures only one instance of Movement_Mapping is loaded or can be loaded.
      *
      * @since 0.1
      * @static
-     * @return Movement_Locations instance
+     * @return Movement_Mapping instance
      */
     public static function instance () {
         if ( is_null( self::$_instance ) )
@@ -102,7 +102,7 @@ class Movement_Locations {
         $this->includes     = trailingslashit( $this->dir_path . 'includes' );
     
         // Admin and settings variables
-        $this->token 			= 'movement_locations';
+        $this->token 			= 'movement_mapping';
         $this->version 			= '1.0';
         
         // Load admin files.
@@ -111,7 +111,7 @@ class Movement_Locations {
         $this->menu = Locations_Tools_Menu::instance();
         
         } // if admin
-        require_once ( 'includes/locations-template.php' );
+        require_once( 'includes/mm-template.php' );
     }
     
     
@@ -124,7 +124,7 @@ class Movement_Locations {
      * @return string
      */
     public function __toString() {
-        return 'locations';
+        return 'movement_mapping';
     }
     
     /**
@@ -135,7 +135,7 @@ class Movement_Locations {
      * @return void
      */
     public function __clone() {
-        _doing_it_wrong( __FUNCTION__, esc_html__( 'Whoah, partner!', 'locations' ), '1.0' );
+        _doing_it_wrong( __FUNCTION__, esc_html__( 'Whoah, partner!', 'movement_mapping' ), '1.0' );
     }
     
     /**
@@ -146,7 +146,7 @@ class Movement_Locations {
      * @return void
      */
     public function __wakeup() {
-        _doing_it_wrong( __FUNCTION__, esc_html__( 'Whoah, partner!', 'locations' ), '1.0' );
+        _doing_it_wrong( __FUNCTION__, esc_html__( 'Whoah, partner!', 'movement_mapping' ), '1.0' );
     }
     
     /**
@@ -157,7 +157,7 @@ class Movement_Locations {
      * @return null
      */
     public function __call( $method = '', $args = array() ) {
-        _doing_it_wrong( "locations::{$method}", esc_html__( 'Method does not exist.', 'locations' ), '1.0' );
+        _doing_it_wrong( "movement_mapping::{$method}", esc_html__( 'Method does not exist.', 'movement_mapping' ), '1.0' );
         unset( $method, $args );
         return null;
     }
@@ -186,7 +186,7 @@ class Movement_Locations {
      * @return void
      */
     public function i18n() {
-        load_plugin_textdomain( 'locations', false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ). 'languages' );
+        load_plugin_textdomain( 'movement_mapping', false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ). 'languages' );
     }
     
     /**
@@ -209,9 +209,9 @@ class Movement_Locations {
  * @access public
  * @return object
  */
-function movement_locations () {
-    return Movement_Locations::instance();
+function movement_mapping () {
+    return Movement_Mapping::instance();
 }
 
 // Let's roll!
-add_action( 'plugins_loaded', 'movement_locations' );
+add_action( 'plugins_loaded', 'movement_mapping' );
