@@ -110,14 +110,8 @@ class Movement_Locations {
         require_once ( 'includes/admin-menu.php' );
         $this->menu = Locations_Tools_Menu::instance();
         
-        require_once ( 'includes/locations-post-type.php' );
-        $this->post_type = Locations_Post_Type::instance();
-        
+        } // if admin
         require_once ( 'includes/locations-template.php' );
-        Locations_Post_Type::instance();
-    
-        
-        }
     }
     
     
