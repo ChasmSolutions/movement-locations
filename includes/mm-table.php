@@ -45,7 +45,7 @@ class MM_Table extends WP_List_Table {
                 return !empty( $item[$column_name] ) ? 'Yes' : 'No';
             case 'OBJECTID_1':
             case 'OBJECTID':
-                return '<a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/query?layerDefs=%7B%220%22%3A+%22OBJECTID_1+%3D+%27'.$item[$column_name].'%27%22%7D&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&outSR=&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&returnIdsOnly=false&returnCountOnly=false&returnDistinctValues=false&returnZ=false&returnM=false&sqlFormat=none&f=pjson&token=">'.$item[$column_name].'</a>';
+                return !empty( $item[$column_name] ) ? $item[$column_name] . ' (<a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/'.$item[$column_name].'">html</a>, <a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/'.$item[$column_name].'?f=pjson">json</a>)' : '';
             case 'Population':
                 return !empty( $item[$column_name] ) ? number_format_i18n($item[$column_name]) : '';
             default:
@@ -58,8 +58,8 @@ class MM_Table extends WP_List_Table {
         
         //Build row actions
         $actions = array(
-            'edit'      => sprintf('<a href="?page=%s&action=%s&location=%s">Edit</a>',$_REQUEST['page'],'edit',$item['ID']),
-            'delete'    => sprintf('<a href="?page=%s&action=%s&location=%s">Delete</a>',$_REQUEST['page'],'delete',$item['ID']),
+//            'edit'      => sprintf('<a href="?page=%s&action=%s&location=%s">Edit</a>',$_REQUEST['page'],'edit',$item['ID']),
+//            'delete'    => sprintf('<a href="?page=%s&action=%s&location=%s">Delete</a>',$_REQUEST['page'],'delete',$item['ID']),
         );
         
         //Return the title contents
@@ -74,7 +74,7 @@ class MM_Table extends WP_List_Table {
     function column_cb($item){
         return sprintf(
             '<input type="checkbox" name="%1$s[]" value="%2$s" />',
-            /*$1%s*/ $this->_args['singular'],  //Let's simply repurpose the table's singular label ("movie")
+            /*$1%s*/ $this->_args['singular'],  //Let's simply repurpose the table's singular label ("locations")
             /*$2%s*/ $item['WorldID']                //The value of the checkbox should be the record's id
         );
     }
@@ -128,7 +128,7 @@ class MM_Table extends WP_List_Table {
     
     function get_bulk_actions() {
         $actions = array(
-            'flag'    => 'Flag'
+            'sync'    => 'Sync'
         );
         return $actions;
     }
@@ -137,11 +137,14 @@ class MM_Table extends WP_List_Table {
     function process_bulk_action() {
         
         //Detect when a bulk action is being triggered...
-        if( 'flag'===$this->current_action() ) { //TODO: make an export to flag
-            wp_die('Items deleted (or they would be if we had items to delete)!');
+        if( 'sync'===$this->current_action() ) {
+           foreach ( $_GET['location'] as $location ) {
+               mm_sync_by_oz_objectid ( $location );
+           }
         }
         
     }
+    
     
     function prepare_items( $search = NULL ) {
         global $wpdb; //This is used only if making any database queries
@@ -163,23 +166,28 @@ class MM_Table extends WP_List_Table {
         $order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
     
         if( empty($search) ) {
-    
-            if( $_GET['cnty'] > 0 ) {
-                $where = $query . ' where cat_id=' . $_GET['cat-filter'];
+            
+            $where = '';
+            if( !empty($_GET['cnty-filter']) ) {
+                $where = " WHERE CntyID='" . $_GET['cnty-filter'] . "'";
             }
             
             $query = "SELECT * 
                     FROM $wpdb->mm
+                    $where
                     ORDER BY $orderby $order
                     LIMIT $page_start, $per_page";
-            
-            
     
             $data = $wpdb->get_results( $query, ARRAY_A );
             
         } else {
             // Trim Search Term
             $search = trim( $search );
+    
+            $where = '';
+            if( !empty($_GET['cnty-filter']) ) {
+                $where = ' AND CntyID=' . $_GET['cnty-filter'];
+            }
     
             /* Notice how you can search multiple columns for your search term easily, and return one data set */
             $data = $wpdb->get_results(
@@ -188,6 +196,8 @@ class MM_Table extends WP_List_Table {
                     FROM  $wpdb->mm 
                     WHERE `WorldID` LIKE '%%%s%%' 
                       OR `Zone_Name` LIKE '%%%s%%'
+                      $where
+                      ORDER BY $orderby $order
                     ",
                     $search,
                     $search
@@ -205,38 +215,39 @@ class MM_Table extends WP_List_Table {
         $this->set_pagination_args( array(
             'total_items' => $total_items,                  //WE have to calculate the total number of items
             'per_page'    => $per_page,                     //WE have to determine how many items to show on a page
-            'total_pages' => ceil($total_items/$per_page)   //WE have to calculate the total number of pages
+            'total_pages' => $total_items > 0 ? $total_items/$per_page : '1', //WE have to calculate the total number of pages
         ) );
     }
     
     function extra_tablenav( $which ) {
-        global $wpdb, $testiURL, $tablename, $tablet;
-        $move_on_url = '&cat-filter=';
+        global $wpdb;
+        
         if ( $which == "top" ){
             ?>
             <div class="alignleft actions bulkactions">
                 <?php
-                $cats = $wpdb->get_results('select * from '.$tablename.' order by title asc', ARRAY_A);
-                if( $cats ){
+                $cnty = $wpdb->get_results('SELECT CntyID, Cnty_Name FROM '.$wpdb->mm.' GROUP BY CntyID, Cnty_Name ORDER BY Cnty_Name ASC', ARRAY_A);
+                
+                if( $cnty ){
                     ?>
-                    <select name="cat-filter" class="ewc-filter-cat">
-                        <option value="">Filter by Category</option>
-                        <?php
-                        foreach( $cats as $cat ){
-                            $selected = '';
-                            if( $_GET['cat-filter'] == $cat['id'] ){
-                                $selected = ' selected = "selected"';
-                            }
-                            $has_testis = false;
-                            $chk_testis = $wpdb->get_row("select id from ".$tablet." where banner_id=".$cat['id'], ARRAY_A);
-                            if( $chk_testis['id'] > 0 ){
+                    
+                        <select name="cnty-filter" id="cnty-filter">
+                            
+                            <option value="">Filter by Country</option>
+                            <?php
+                            foreach( $cnty as $cat ){
+                                $selected = '';
+                                if( $_GET['cnty-filter'] == $cat['CntyID'] ){
+                                    $selected = ' selected = "selected"';
+                                }
                                 ?>
-                                <option value="<?php echo $move_on_url . $cat['id']; ?>" <?php echo $selected; ?>><?php echo $cat['title']; ?></option>
+                                <option value="<?php echo $cat['CntyID']; ?>" <?php echo $selected; ?>><?php echo $cat['Cnty_Name']; ?></option>
                                 <?php
                             }
-                        }
-                        ?>
-                    </select>
+                            ?>
+                        </select>
+                        <button class="button" type="submit">Filter</button>
+                    
                     <?php
                 }
                 ?>

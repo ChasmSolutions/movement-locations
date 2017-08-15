@@ -28,9 +28,6 @@ class MM_Admin_Tab_Settings
         $html .= '<div class="wrap"><div id="poststuff"><div id="post-body" class="metabox-holder columns-2">';
         $html .= '<div id="post-body-content">';
         
-        global $wpdb;
-        $results = $wpdb->get_results("SELECT Cnty_Name FROM $wpdb->mm ", ARRAY_A);
-        print '<pre>'; print_r($results); print '</pre>';
         
         $html .= '</div><!-- end post-body-content --><div id="postbox-container-1" class="postbox-container">';
         

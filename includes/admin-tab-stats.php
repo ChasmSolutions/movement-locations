@@ -41,6 +41,7 @@ class MM_Admin_Tab_Stats
     
     public function stats_box () {
         $html = '';
+        $html .= '<div class="wrap">';
     
         $html .= '<table class="widefat striped">
                     <thead><th>Stats</th></thead>
@@ -48,20 +49,22 @@ class MM_Admin_Tab_Stats
         
         $country_stats = ml_get_country_stats ();
         foreach ( $country_stats as $key => $value ) {
-            $html .= $key . ': ' . $value . '<br>';
+            $html .= $key . ' : ' . $value . '<br>';
         }
         
         $html .= '</td></tr><tr><td>';
         
-        print $html;
+        echo $html;
     
-        print '<pre>'; print_r(ml_get_admin_tree ()); print '</pre>';
+//        print '<pre>'; print_r(ml_get_admin_tree ()); print '</pre>';
         
         $html = '';
         
-        $html .= '</td></tr></tbody></table>';
+        print '<pre>'; print_r(mm_sync_by_oz_objectid ( '1191' )); print '</pre>';
         
-        print $html;
+        $html .= '</td></tr></tbody></table></div>';
+        
+        echo $html;
     }
     
 }

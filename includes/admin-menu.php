@@ -58,7 +58,7 @@ class MM_Admin_Menu {
      */
     public function load_admin_menu_item () {
         add_menu_page( __('Movement Mapping', 'movement_mapping'), __('Movement Mapping', 'movement_mapping'), 'manage_options', 'movement_mapping', [ $this, 'page_content'], 'dashicons-admin-site', '6' );
-        add_submenu_page( 'movement_mapping', __( 'Table', 'movement_mapping' ), __( 'Table', 'movement_mapping' ), 'manage_options', 'movement_locations', [ $this, 'mm_table_page' ] );
+        add_submenu_page( 'movement_mapping', __( 'Search', 'movement_mapping' ), __( 'Search', 'movement_mapping' ), 'manage_options', 'movement_locations', [ $this, 'mm_table_page' ] );
     }
 
     /**
@@ -76,14 +76,18 @@ class MM_Admin_Menu {
          * Begin Header & Tab Bar
          */
         if (isset( $_GET["tab"] )) {$tab = $_GET["tab"];
-        } else {$tab = 'settings';}
+        } else {$tab = 'stats';}
 
-        $tab_link_pre = '<a href="edit.php?post_type=locations&page=movement_locations&tab=';
+        $tab_link_pre = '<a href="admin.php?page=movement_mapping&tab=';
         $tab_link_post = '" class="nav-tab ';
 
         $html = '<div class="wrap">
-            <h2>Locations Settings</h2>
+            <h2>Movement Mapping Settings</h2>
             <h2 class="nav-tab-wrapper">';
+        
+        $html .= $tab_link_pre . 'stats' . $tab_link_post;
+        if ($tab == 'stats' ) {$html .= 'nav-tab-active';}
+        $html .= '">Stats</a>';
 
         $html .= $tab_link_pre . 'settings' . $tab_link_post;
         if ($tab == 'settings' || !isset( $tab )) {$html .= 'nav-tab-active';}
@@ -93,9 +97,6 @@ class MM_Admin_Menu {
         if ($tab == 'sync' ) {$html .= 'nav-tab-active';}
         $html .= '">Sync</a>';
     
-        $html .= $tab_link_pre . 'stats' . $tab_link_post;
-        if ($tab == 'stats' ) {$html .= 'nav-tab-active';}
-        $html .= '">Stats</a>';
 
         $html .= '</h2>';
 
@@ -154,17 +155,11 @@ class MM_Admin_Menu {
             
             <div id="icon-users" class="icon32"><br/></div>
             <h2>Movement Mapping Table</h2>
-
-            <form method="get">
-                <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-                <?php $ListTable->search_box('Search Table', 'movement-mapping'); ?>
-            </form>
             
             <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
             <form id="movement-mapping" method="get">
-                <!-- For plugins, we also need to ensure that the form posts back to our current page -->
                 <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-                <!-- Now we can render the completed list table -->
+                <?php $ListTable->search_box('Search Table', 'movement-mapping'); ?>
                 <?php $ListTable->display() ?>
                 
             </form>
