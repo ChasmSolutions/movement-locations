@@ -141,20 +141,32 @@ class MM_Admin_Menu {
         require_once( 'mm-table.php' );
         $ListTable = new MM_Table();
         //Fetch, prepare, sort, and filter our data...
-        $ListTable->prepare_items();
+        if( isset($_GET['s']) ){
+            trim($_GET['s']);
+            $ListTable->prepare_items($_GET['s']);
+        } else {
+            $ListTable->prepare_items();
+        }
+        
         
         ?>
         <div class="wrap">
             
             <div id="icon-users" class="icon32"><br/></div>
             <h2>Movement Mapping Table</h2>
+
+            <form method="get">
+                <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+                <?php $ListTable->search_box('Search Table', 'movement-mapping'); ?>
+            </form>
             
             <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
-            <form id="movies-filter" method="get">
+            <form id="movement-mapping" method="get">
                 <!-- For plugins, we also need to ensure that the form posts back to our current page -->
                 <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
                 <!-- Now we can render the completed list table -->
                 <?php $ListTable->display() ?>
+                
             </form>
         
         </div>

@@ -35,19 +35,21 @@ class MM_Table extends WP_List_Table {
             case 'Adm4ID':
             case 'Adm4_Name':
             case 'World':
-            case 'Population':
-            case 'Cen_x':
-            case 'Cen_y':
             case 'Region':
             case 'Field':
+            case 'Notes':
+                return $item[$column_name];
+            case 'Center':
+                return !empty( $item['Cen_x'] ) ? '<a href="https://www.google.com/maps/@'.$item['Cen_y'].','.$item['Cen_x'].',10z" target="_blank">' . $item['Cen_x'] . ', ' . $item['Cen_y'] . '</a>' : '';
+            case 'geometry':
+                return !empty( $item[$column_name] ) ? 'Yes' : 'No';
             case 'OBJECTID_1':
             case 'OBJECTID':
-            case 'Notes':
-                return $item->$column_name;
-            case 'geometry':
-                return true;
+                return '<a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/query?layerDefs=%7B%220%22%3A+%22OBJECTID_1+%3D+%27'.$item[$column_name].'%27%22%7D&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&outSR=&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&returnIdsOnly=false&returnCountOnly=false&returnDistinctValues=false&returnZ=false&returnM=false&sqlFormat=none&f=pjson&token=">'.$item[$column_name].'</a>';
+            case 'Population':
+                return !empty( $item[$column_name] ) ? number_format_i18n($item[$column_name]) : '';
             default:
-                return print_r($item,true); //Show the whole array for troubleshooting purposes
+                return print_r( $item,true ); //Show the whole array for troubleshooting purposes
         }
     }
     
@@ -73,7 +75,7 @@ class MM_Table extends WP_List_Table {
         return sprintf(
             '<input type="checkbox" name="%1$s[]" value="%2$s" />',
             /*$1%s*/ $this->_args['singular'],  //Let's simply repurpose the table's singular label ("movie")
-            /*$2%s*/ $item->WorldID                //The value of the checkbox should be the record's id
+            /*$2%s*/ $item['WorldID']                //The value of the checkbox should be the record's id
         );
     }
     
@@ -85,24 +87,24 @@ class MM_Table extends WP_List_Table {
             'Zone_Name'     => 'Zone Name',
             'CntyID'        => 'CntyID',
             'Cnty_Name'     => 'Cnty_Name',
-            'Adm1ID'        => 'Adm1ID',
-            'Adm1_Name'     => 'Adm1_Name',
-            'Adm2ID'        => 'Adm2ID',
-            'Adm2_Name'     => 'Adm2_Name',
-            'Adm3ID'        => 'Adm3ID',
-            'Adm3_Name'     => 'Adm3_Name',
-            'Adm4ID'        => 'Adm4ID',
-            'Adm4_Name'     => 'Adm4_Name',
-            'World'         => 'World',
+//            'Adm1ID'        => 'Adm1ID',
+//            'Adm1_Name'     => 'Adm1_Name',
+//            'Adm2ID'        => 'Adm2ID',
+//            'Adm2_Name'     => 'Adm2_Name',
+//            'Adm3ID'        => 'Adm3ID',
+//            'Adm3_Name'     => 'Adm3_Name',
+//            'Adm4ID'        => 'Adm4ID',
+//            'Adm4_Name'     => 'Adm4_Name',
+//            'World'         => 'World',
             'Population'    => 'Population',
-            'Cen_x'         => 'Cen_x',
-            'Cen_y'         => 'Cen_y',
+            'Center'         => 'Center',
+//            'Cen_y'         => 'Cen_y',
             'Region'        => 'Region',
             'Field'         => 'Field',
             'geometry'      => 'geometry',
             'OBJECTID_1'    => 'OBJECTID_1',
-            'OBJECTID'      => 'OBJECTID',
-            'Notes'         => 'Notes',
+//            'OBJECTID'      => 'OBJECTID',
+//            'Notes'         => 'Notes',
         );
         return $columns;
     }
@@ -115,6 +117,10 @@ class MM_Table extends WP_List_Table {
             'Population'  => array('Population',false),
             'CntyID'  => array('CntyID',false),
             'Cnty_Name'  => array('Cnty_Name',false),
+            'geometry'  => array('geometry',false),
+            'OBJECTID_1'  => array('OBJECTID_1',false),
+            'Region'  => array('Region',false),
+            'Field'  => array('Field',false),
         );
         return $sortable_columns;
     }
@@ -137,41 +143,62 @@ class MM_Table extends WP_List_Table {
         
     }
     
-    
-    function prepare_items() {
+    function prepare_items( $search = NULL ) {
         global $wpdb; //This is used only if making any database queries
         
-        $per_page = 20;
-        
-        
-        $columns = $this->get_columns();
+        $columns = $this->get_columns(); // prepare columns
         $hidden = array();
         $sortable = $this->get_sortable_columns();
         
+        $this->_column_headers = array($columns, $hidden, $sortable); // construct column headers to wp_table
         
-        $this->_column_headers = array($columns, $hidden, $sortable);
+        $this->process_bulk_action(); // construct bulk actions
         
+        $total_items = $wpdb->get_var("SELECT count(*) FROM $wpdb->mm"); // get total items
+        $current_page = $this->get_pagenum();// get current page
+        $per_page = 20; // get items per page
+        $page_start = ($current_page-1)*$per_page; // calculate starting item id
         
-        $this->process_bulk_action();
-        
-        
-        $data = $wpdb->get_results("SELECT * FROM $wpdb->mm LIMIT 1000 ;");;
-        
-        
-        function ml_usort_reorder($a,$b){
-            $orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'WorldID'; //If no sort, default to title
-            $order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
-            $result = strcmp($a[$orderby], $b[$orderby]); //Determine sort order
-            return ($order==='asc') ? $result : -$result; //Send final sort direction to usort
+        $orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'WorldID'; //If no sort, default to title
+        $order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
+    
+        if( empty($search) ) {
+    
+            if( $_GET['cnty'] > 0 ) {
+                $where = $query . ' where cat_id=' . $_GET['cat-filter'];
+            }
+            
+            $query = "SELECT * 
+                    FROM $wpdb->mm
+                    ORDER BY $orderby $order
+                    LIMIT $page_start, $per_page";
+            
+            
+    
+            $data = $wpdb->get_results( $query, ARRAY_A );
+            
+        } else {
+            // Trim Search Term
+            $search = trim( $search );
+    
+            /* Notice how you can search multiple columns for your search term easily, and return one data set */
+            $data = $wpdb->get_results(
+                $wpdb->prepare( "
+                    SELECT * 
+                    FROM  $wpdb->mm 
+                    WHERE `WorldID` LIKE '%%%s%%' 
+                      OR `Zone_Name` LIKE '%%%s%%'
+                    ",
+                    $search,
+                    $search
+                ),
+                ARRAY_A
+            );
+    
+    
+            $total_items = count($data);
+            $per_page = $total_items;
         }
-        
-//        usort($data, 'ml_usort_reorder');
-        
-        $current_page = $this->get_pagenum();
-        
-        $total_items = count($data);
-        
-//        $data = array_slice($data,(($current_page-1)*$per_page),$per_page);
         
         $this->items = $data;
         
@@ -180,6 +207,46 @@ class MM_Table extends WP_List_Table {
             'per_page'    => $per_page,                     //WE have to determine how many items to show on a page
             'total_pages' => ceil($total_items/$per_page)   //WE have to calculate the total number of pages
         ) );
+    }
+    
+    function extra_tablenav( $which ) {
+        global $wpdb, $testiURL, $tablename, $tablet;
+        $move_on_url = '&cat-filter=';
+        if ( $which == "top" ){
+            ?>
+            <div class="alignleft actions bulkactions">
+                <?php
+                $cats = $wpdb->get_results('select * from '.$tablename.' order by title asc', ARRAY_A);
+                if( $cats ){
+                    ?>
+                    <select name="cat-filter" class="ewc-filter-cat">
+                        <option value="">Filter by Category</option>
+                        <?php
+                        foreach( $cats as $cat ){
+                            $selected = '';
+                            if( $_GET['cat-filter'] == $cat['id'] ){
+                                $selected = ' selected = "selected"';
+                            }
+                            $has_testis = false;
+                            $chk_testis = $wpdb->get_row("select id from ".$tablet." where banner_id=".$cat['id'], ARRAY_A);
+                            if( $chk_testis['id'] > 0 ){
+                                ?>
+                                <option value="<?php echo $move_on_url . $cat['id']; ?>" <?php echo $selected; ?>><?php echo $cat['title']; ?></option>
+                                <?php
+                            }
+                        }
+                        ?>
+                    </select>
+                    <?php
+                }
+                ?>
+            </div>
+            <?php
+        }
+        if ( $which == "bottom" ){
+            //The code that goes after the table is there
+            
+        }
     }
     
     

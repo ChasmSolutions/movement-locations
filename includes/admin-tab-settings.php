@@ -29,7 +29,7 @@ class MM_Admin_Tab_Settings
         $html .= '<div id="post-body-content">';
         
         global $wpdb;
-        $results = $wpdb->get_results("SELECT * FROM $wpdb->mm;");
+        $results = $wpdb->get_results("SELECT Cnty_Name FROM $wpdb->mm ", ARRAY_A);
         print '<pre>'; print_r($results); print '</pre>';
         
         $html .= '</div><!-- end post-body-content --><div id="postbox-container-1" class="postbox-container">';
