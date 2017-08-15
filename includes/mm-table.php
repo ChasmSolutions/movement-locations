@@ -1,7 +1,7 @@
 <?php
 
 
-if(!class_exists('WP_List_Table')){
+if(!class_exists( 'WP_List_Table' )){
     require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
@@ -20,7 +20,7 @@ class MM_Table extends WP_List_Table {
         
     }
     
-    function column_default($item, $column_name){
+    function column_default( $item, $column_name ){
         switch($column_name){
             case 'WorldID':
             case 'Zone_Name':
@@ -47,14 +47,14 @@ class MM_Table extends WP_List_Table {
             case 'OBJECTID':
                 return !empty( $item[$column_name] ) ? $item[$column_name] . ' (<a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/'.$item[$column_name].'">html</a>, <a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/'.$item[$column_name].'?f=pjson">json</a>)' : '';
             case 'Population':
-                return !empty( $item[$column_name] ) ? number_format_i18n($item[$column_name]) : '';
+                return !empty( $item[$column_name] ) ? number_format_i18n( $item[$column_name] ) : '';
             default:
                 return print_r( $item,true ); //Show the whole array for troubleshooting purposes
         }
     }
     
     
-    function column_title($item){
+    function column_title( $item ){
         
         //Build row actions
         $actions = array(
@@ -66,12 +66,12 @@ class MM_Table extends WP_List_Table {
         return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s',
             /*$1%s*/ $item['Zone_name'],
             /*$2%s*/ $item['WorldID'],
-            /*$3%s*/ $this->row_actions($actions)
+            /*$3%s*/ $this->row_actions( $actions )
         );
     }
     
     
-    function column_cb($item){
+    function column_cb( $item ){
         return sprintf(
             '<input type="checkbox" name="%1$s[]" value="%2$s" />',
             /*$1%s*/ $this->_args['singular'],  //Let's simply repurpose the table's singular label ("locations")
@@ -138,15 +138,15 @@ class MM_Table extends WP_List_Table {
         
         //Detect when a bulk action is being triggered...
         if( 'sync'===$this->current_action() ) {
-           foreach ( $_GET['location'] as $location ) {
-               mm_sync_by_oz_objectid ( $location );
-           }
+            foreach ( $_GET['location'] as $location ) {
+                mm_sync_by_oz_objectid( $location );
+            }
         }
         
     }
     
     
-    function prepare_items( $search = NULL ) {
+    function prepare_items( $search = null ) {
         global $wpdb; //This is used only if making any database queries
         
         $columns = $this->get_columns(); // prepare columns
@@ -157,18 +157,18 @@ class MM_Table extends WP_List_Table {
         
         $this->process_bulk_action(); // construct bulk actions
         
-        $total_items = $wpdb->get_var("SELECT count(*) FROM $wpdb->mm"); // get total items
+        $total_items = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm" ); // get total items
         $current_page = $this->get_pagenum();// get current page
         $per_page = 20; // get items per page
         $page_start = ($current_page-1)*$per_page; // calculate starting item id
         
-        $orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'WorldID'; //If no sort, default to title
-        $order = (!empty($_REQUEST['order'])) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
+        $orderby = (!empty( $_REQUEST['orderby'] )) ? $_REQUEST['orderby'] : 'WorldID'; //If no sort, default to title
+        $order = (!empty( $_REQUEST['order'] )) ? $_REQUEST['order'] : 'asc'; //If no order, default to asc
     
-        if( empty($search) ) {
+        if( empty( $search ) ) {
             
             $where = '';
-            if( !empty($_GET['cnty-filter']) ) {
+            if( !empty( $_GET['cnty-filter'] ) ) {
                 $where = " WHERE CntyID='" . $_GET['cnty-filter'] . "'";
             }
             
@@ -185,7 +185,7 @@ class MM_Table extends WP_List_Table {
             $search = trim( $search );
     
             $where = '';
-            if( !empty($_GET['cnty-filter']) ) {
+            if( !empty( $_GET['cnty-filter'] ) ) {
                 $where = ' AND CntyID=' . $_GET['cnty-filter'];
             }
     
@@ -206,7 +206,7 @@ class MM_Table extends WP_List_Table {
             );
     
     
-            $total_items = count($data);
+            $total_items = count( $data );
             $per_page = $total_items;
         }
         
@@ -226,7 +226,7 @@ class MM_Table extends WP_List_Table {
             ?>
             <div class="alignleft actions bulkactions">
                 <?php
-                $cnty = $wpdb->get_results('SELECT CntyID, Cnty_Name FROM '.$wpdb->mm.' GROUP BY CntyID, Cnty_Name ORDER BY Cnty_Name ASC', ARRAY_A);
+                $cnty = $wpdb->get_results( 'SELECT CntyID, Cnty_Name FROM '.$wpdb->mm.' GROUP BY CntyID, Cnty_Name ORDER BY Cnty_Name ASC', ARRAY_A );
                 
                 if( $cnty ){
                     ?>

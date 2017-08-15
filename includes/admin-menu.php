@@ -57,7 +57,7 @@ class MM_Admin_Menu {
      * Load Admin menu into Settings
      */
     public function load_admin_menu_item () {
-        add_menu_page( __('Movement Mapping', 'movement_mapping'), __('Movement Mapping', 'movement_mapping'), 'manage_options', 'movement_mapping', [ $this, 'page_content'], 'dashicons-admin-site', '6' );
+        add_menu_page( __( 'Movement Mapping', 'movement_mapping' ), __( 'Movement Mapping', 'movement_mapping' ), 'manage_options', 'movement_mapping', [ $this, 'page_content'], 'dashicons-admin-site', '6' );
         add_submenu_page( 'movement_mapping', __( 'Search', 'movement_mapping' ), __( 'Search', 'movement_mapping' ), 'manage_options', 'movement_locations', [ $this, 'mm_table_page' ] );
     }
 
@@ -111,17 +111,17 @@ class MM_Admin_Menu {
         switch ($tab) {
 
             case "sync":
-                require_once ( 'admin-tab-sync.php' );
-                $class_object = new MM_Admin_Tab_Sync ();
+                require_once( 'admin-tab-sync.php' );
+                $class_object = new MM_Admin_Tab_Sync();
                 $html .= '' . $class_object->page_contents();
                 break;
             case "stats":
-                require_once ( 'admin-tab-stats.php' );
+                require_once( 'admin-tab-stats.php' );
                 $class_object = new MM_Admin_Tab_Stats();
                 $html .= '' . $class_object->page_contents();
                 break;
             case "settings":
-                require_once ( 'admin-tab-settings.php' );
+                require_once( 'admin-tab-settings.php' );
                 $class_object = new MM_Admin_Tab_Settings();
                 $html .= '' . $class_object->page_contents();
                 break;
@@ -142,9 +142,9 @@ class MM_Admin_Menu {
         require_once( 'mm-table.php' );
         $ListTable = new MM_Table();
         //Fetch, prepare, sort, and filter our data...
-        if( isset($_GET['s']) ){
-            trim($_GET['s']);
-            $ListTable->prepare_items($_GET['s']);
+        if( isset( $_GET['s'] ) ){
+            trim( $_GET['s'] );
+            $ListTable->prepare_items( $_GET['s'] );
         } else {
             $ListTable->prepare_items();
         }
@@ -159,7 +159,7 @@ class MM_Admin_Menu {
             <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
             <form id="movement-mapping" method="get">
                 <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
-                <?php $ListTable->search_box('Search Table', 'movement-mapping'); ?>
+                <?php $ListTable->search_box( 'Search Table', 'movement-mapping' ); ?>
                 <?php $ListTable->display() ?>
                 
             </form>

@@ -8,7 +8,8 @@
  * Author: Chasm.Solutions & Kingdom.Training
  * Author URI: https://github.com/ChasmSolutions
  */
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) { exit; // Exit if accessed directly
+}
 
 /**
  * Singleton class for setting up the plugin.
@@ -63,9 +64,9 @@ class Movement_Mapping {
     
     /**
      * Movement_Mapping The single instance of Movement_Mapping.
-     * @var 	object
+     * @var     object
      * @access  private
-     * @since 	0.1
+     * @since     0.1
      */
     private static $_instance = null;
     
@@ -79,8 +80,9 @@ class Movement_Mapping {
      * @return Movement_Mapping instance
      */
     public static function instance () {
-        if ( is_null( self::$_instance ) )
+        if ( is_null( self::$_instance ) ) {
             self::$_instance = new self();
+        }
         return self::$_instance;
     } // End instance()
     
@@ -100,19 +102,19 @@ class Movement_Mapping {
     
         // Main plugin directory path and URI.
         $this->dir_path     = trailingslashit( plugin_dir_path( __FILE__ ) );
-        $this->dir_uri      = trailingslashit( plugin_dir_url(  __FILE__ ) );
+        $this->dir_uri      = trailingslashit( plugin_dir_url( __FILE__ ) );
     
         // Plugin directory paths.
         $this->includes     = trailingslashit( $this->dir_path . 'includes' );
     
         // Admin and settings variables
-        $this->token 			= 'movement_mapping';
-        $this->version 			= '1.0';
+        $this->token             = 'movement_mapping';
+        $this->version             = '1.0';
         
         // Load admin files.
         if ( is_admin() ) {
-        require_once ( 'includes/admin-menu.php' );
-        $this->menu = MM_Admin_Menu::instance();
+            require_once( 'includes/admin-menu.php' );
+            $this->menu = MM_Admin_Menu::instance();
     
         
         

@@ -47,7 +47,7 @@ class MM_Admin_Tab_Stats
                     <thead><th>Stats</th></thead>
                     <tbody><tr><td>';
         
-        $country_stats = ml_get_country_stats ();
+        $country_stats = ml_get_country_stats();
         foreach ( $country_stats as $key => $value ) {
             $html .= $key . ' : ' . $value . '<br>';
         }
@@ -60,7 +60,9 @@ class MM_Admin_Tab_Stats
         
         $html = '';
         
-        print '<pre>'; print_r(mm_sync_by_oz_objectid ( '1191' )); print '</pre>';
+        print '<pre>';
+        print_r( mm_sync_by_oz_objectid( '1191' ) );
+        print '</pre>';
         
         $html .= '</td></tr></tbody></table></div>';
         
