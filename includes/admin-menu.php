@@ -58,7 +58,7 @@ class MM_Admin_Menu {
      */
     public function load_admin_menu_item () {
         add_menu_page( __( 'Movement Mapping', 'movement_mapping' ), __( 'Movement Mapping', 'movement_mapping' ), 'manage_options', 'movement_mapping', [ $this, 'page_content'], 'dashicons-admin-site', '6' );
-        add_submenu_page( 'movement_mapping', __( 'Search', 'movement_mapping' ), __( 'Search', 'movement_mapping' ), 'manage_options', 'movement_locations', [ $this, 'mm_table_page' ] );
+        add_submenu_page( 'movement_mapping', __( 'Search & Sync', 'movement_mapping' ), __( 'Search & Sync', 'movement_mapping' ), 'manage_options', 'movement_locations', [ $this, 'mm_table_page' ] );
     }
 
     /**

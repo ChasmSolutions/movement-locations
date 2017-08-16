@@ -54,16 +54,6 @@ class MM_Admin_Tab_Stats
         
         $html .= '</td></tr><tr><td>';
         
-        echo $html;
-    
-//        print '<pre>'; print_r(ml_get_admin_tree ()); print '</pre>';
-        
-        $html = '';
-        
-        print '<pre>';
-        print_r( mm_sync_by_oz_objectid( '1191' ) );
-        print '</pre>';
-        
         $html .= '</td></tr></tbody></table></div>';
         
         echo $html;
