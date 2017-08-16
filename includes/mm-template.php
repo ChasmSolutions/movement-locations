@@ -100,6 +100,7 @@ function mm_sync_by_oz_objectid ( $worldID ) {
             'OBJECTID_1' => $oz_record->feature->attributes->OBJECTID_1,
             'OBJECTID' => $oz_record->feature->attributes->OBJECTID,
             'Notes' => $oz_record->feature->attributes->Notes,
+            'last_sync' => date("Y-m-d H:i:s"),
         ),
         array(
             '%s',
@@ -124,6 +125,7 @@ function mm_sync_by_oz_objectid ( $worldID ) {
             '%s',
             '%d',
             '%d',
+            '%s',
             '%s',
         )
     );

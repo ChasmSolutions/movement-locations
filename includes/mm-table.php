@@ -38,6 +38,7 @@ class MM_Table extends WP_List_Table {
             case 'Region':
             case 'Field':
             case 'Notes':
+            case 'last_sync':
                 return $item[$column_name];
             case 'Center':
                 return !empty( $item['Cen_x'] ) ? '<a href="https://www.google.com/maps/@'.$item['Cen_y'].','.$item['Cen_x'].',10z" target="_blank">' . $item['Cen_x'] . ', ' . $item['Cen_y'] . '</a>' : '';
@@ -105,6 +106,7 @@ class MM_Table extends WP_List_Table {
             'OBJECTID_1'    => 'OBJECTID_1',
 //            'OBJECTID'      => 'OBJECTID',
 //            'Notes'         => 'Notes',
+            'last_sync'         => 'last_sync',
         );
         return $columns;
     }
@@ -121,6 +123,7 @@ class MM_Table extends WP_List_Table {
             'OBJECTID_1'  => array('OBJECTID_1',false),
             'Region'  => array('Region',false),
             'Field'  => array('Field',false),
+            'last_sync'  => array('last_sync',false),
         );
         return $sortable_columns;
     }
