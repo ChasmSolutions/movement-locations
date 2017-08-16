@@ -58,14 +58,14 @@ class MM_Endpoints {
     public function add_api_routes () {
         $version = '1';
         $namespace = 'mm/v' . $version;
-        $base = 'locations';
+        $base = 'install';
         register_rest_route(
             $namespace, '/' . $base . '/getcountryadmin1', [
-            [
-                'methods'         => WP_REST_Server::CREATABLE,
-                'callback'        => [ $this, 'get_country_admin_1' ],
-            ],
-             ]
+                [
+                    'methods'         => WP_REST_Server::CREATABLE,
+                    'callback'        => [ $this, 'get_country_admin_1' ],
+                ],
+            ]
         );
     }
 

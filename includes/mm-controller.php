@@ -21,9 +21,9 @@ class MM_Controller {
      */
     public static function get_country_admin_1 ( $CntyID ) {
         
-        // query $CntyID
+        // query $CntyID and filter for admin1
         
-        //
+        //prepare returns in foreach loop for geojson
         
         $geojson =
             [
