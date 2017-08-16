@@ -44,7 +44,7 @@ class MM_Controller {
                             ]
                         ],
                         'properties' => [
-                            'WorldID' => (string) $WorldID,
+                            'WorldID' => (string) $CntyID,
                             'Zone_Name' => '0',
                             'CntyID' => '0',
                             'Cnty_Name' => '0',
@@ -86,7 +86,7 @@ class MM_Controller {
                             ]
                         ],
                         'properties' => [
-                            'WorldID' => (string) $WorldID,
+                            'WorldID' => (string) $CntyID,
                             'Zone_Name' => '0',
                             'CntyID' => '0',
                             'Cnty_Name' => '0',
