@@ -14,27 +14,37 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly.
 class MM_Controller {
     
     /**
-     * Returns the tract geoid from an address
+     * Returns the records according to country and level
      *
      * @param  $address
      * @return array
      */
-    public static function get_country_admin_1 ( $CntyID ) {
+    public static function get_country_by_level ( $CntyID, $level ) {
         global $wpdb;
+        $where = '';
+        
+        switch ($level) {
+            case '0':
+                $where = "WHERE `WorldID` LIKE '___' AND `CntyID` = '$CntyID'";
+                break;
+            case '1':
+                $where = "WHERE `WorldID` LIKE '___-___' AND `CntyID` = '$CntyID'";
+                break;
+            case '2':
+                $where = "WHERE `WorldID` LIKE '___-___-___' AND `CntyID` = '$CntyID'";
+                break;
+            case '3':
+                $where = "WHERE `WorldID` LIKE '___-___-___-___' AND `CntyID` = '$CntyID'";
+                break;
+            case '4':
+                $where = "WHERE `WorldID` LIKE '___-___-___-___-___' AND `CntyID` = '$CntyID'";
+                break;
+            default:
+                break;
+        }
         
         // query $CntyID and filter for admin1
-        $data = $wpdb->get_results(
-            $wpdb->prepare( "
-                    SELECT * 
-                    FROM $wpdb->mm
-                    WHERE (`WorldID` LIKE '___'
-                      OR `WorldID` LIKE '___-___')
-                      AND `CntyID` = '%s'
-                    ",
-                $CntyID
-            ),
-            ARRAY_A
-        );
+        $data = $wpdb->get_results("SELECT * FROM $wpdb->mm $where", ARRAY_A );
     
         $geojson = [
             'type' => 'FeatureCollection',
@@ -79,99 +89,6 @@ class MM_Controller {
                     ]
                 ];
         }
-        
-//        $geojson =
-//            [
-//                'type' => 'FeatureCollection',
-//                'features'  => [
-//                    [
-//                        'type' => 'Feature',
-//                        'geometry' => [
-//                            'type' => 'Polygon',
-//                            'coordinates' => [
-//                                [
-//                                    [100.0, 0.0],
-//                                    [101.0, 0.0],
-//                                    [101.0, 1.0],
-//                                    [100.0, 1.0],
-//                                    [100.0, 0.0]
-//                                ]
-//                            ]
-//                        ],
-//                        'properties' => [
-//                            'WorldID' => (string) $CntyID,
-//                            'Zone_Name' => '0',
-//                            'CntyID' => '0',
-//                            'Cnty_Name' => '0',
-//                            'Adm1ID' => '0',
-//                            'Adm1_Name' => '0',
-//                            'Adm2ID' => '0',
-//                            'Adm2_Name' => '0',
-//                            'Adm3ID' => '0',
-//                            'Adm3_Name' => '0',
-//                            'Adm4ID' => '0',
-//                            'Adm4_Name' => '0',
-//                            'World' => '0',
-//                            'Population' => '0',
-//                            'Shape_Leng' => '0',
-//                            'Cen_x' => '0',
-//                            'Cen_y' => '0',
-//                            'Region' => '0',
-//                            'Field' => '0',
-//                            'geometry' => '0',
-//                            'OBJECTID_1' => '0',
-//                            'OBJECTID' => '0',
-//                            'Notes' => '0',
-//                            'Last_Sync' => '0',
-//                            'Sync_Source' => '0'
-//                        ]
-//                    ],
-//                    [
-//                        'type' => 'Feature',
-//                        'geometry' => [
-//                            'type' => 'Polygon',
-//                            'coordinates' => [
-//                                [
-//                                    [100.0, 0.0],
-//                                    [101.0, 0.0],
-//                                    [101.0, 1.0],
-//                                    [100.0, 1.0],
-//                                    [100.0, 0.0]
-//                                ]
-//                            ]
-//                        ],
-//                        'properties' => [
-//                            'WorldID' => (string) $CntyID,
-//                            'Zone_Name' => '0',
-//                            'CntyID' => '0',
-//                            'Cnty_Name' => '0',
-//                            'Adm1ID' => '0',
-//                            'Adm1_Name' => '0',
-//                            'Adm2ID' => '0',
-//                            'Adm2_Name' => '0',
-//                            'Adm3ID' => '0',
-//                            'Adm3_Name' => '0',
-//                            'Adm4ID' => '0',
-//                            'Adm4_Name' => '0',
-//                            'World' => '0',
-//                            'Population' => '0',
-//                            'Shape_Leng' => '0',
-//                            'Cen_x' => '0',
-//                            'Cen_y' => '0',
-//                            'Region' => '0',
-//                            'Field' => '0',
-//                            'geometry' => '0',
-//                            'OBJECTID_1' => '0',
-//                            'OBJECTID' => '0',
-//                            'Notes' => '0',
-//                            'Last_Sync' => '0',
-//                            'Sync_Source' => '0'
-//                        ]
-//                    ]
-//
-//                ]
-//
-//            ];
         
         return [
             'status' => 'OK',

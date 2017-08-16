@@ -27,10 +27,12 @@ class MM_Admin_Tab_Settings
         
         $html .= '<div class="wrap"><div id="poststuff"><div id="post-body" class="metabox-holder columns-2">';
         $html .= '<div id="post-body-content">';
-        $worldID = "'AFG-BAA'";
-        $oz_record = json_decode( file_get_contents( 'https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/query?where=WorldID='.$worldID.'&outFields=*&returnGeometry=true&resultRecordCount=1&f=pgeojson' ) );
+    
+        global $wpdb;
+        $where = "WHERE (`WorldID` LIKE '___' OR `WorldID` LIKE '___-___') AND `CntyID` = 'ABW'";
+        $data = $wpdb->get_results("SELECT * FROM $wpdb->mm $where", ARRAY_A );
         print '<pre>';
-        print_r( $oz_record );
+        print_r( $data );
         print '</pre>';
         
         $html .= '</div><!-- end post-body-content --><div id="postbox-container-1" class="postbox-container">';

@@ -60,10 +60,10 @@ class MM_Endpoints {
         $namespace = 'mm/v' . $version;
         $base = 'install';
         register_rest_route(
-            $namespace, '/' . $base . '/getcountryadmin1', [
+            $namespace, '/' . $base . '/getcountrybylevel', [
                 [
                     'methods'         => WP_REST_Server::CREATABLE,
-                    'callback'        => [ $this, 'get_country_admin_1' ],
+                    'callback'        => [ $this, 'get_country_by_level' ],
                 ],
             ]
         );
@@ -72,15 +72,17 @@ class MM_Endpoints {
     /**
      * Get admin level 1 for a country
      *
+     * @example http://locations/wp-json/mm/v1/install/getcountrybylevel?CntyID=CHN&level=2
+     *
      * @param  WP_REST_Request $request
      * @access public
      * @since  0.1
      * @return string|WP_Error The contact on success
      */
-    public function get_country_admin_1 ( WP_REST_Request $request ){
+    public function get_country_by_level ( WP_REST_Request $request ){
         $params = $request->get_params();
         if (isset( $params['CntyID'] )){
-            $result = MM_Controller::get_country_admin_1( $params['CntyID'] );
+            $result = MM_Controller::get_country_by_level( $params['CntyID'], $params['level'] );
             if ($result["status"] == 'OK'){
                 return $result["geojson"];
             } else {
