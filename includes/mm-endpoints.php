@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Disciple_Tools_Locations_Endpoints
+ * MM_Endpoints
  *
- * @class   Disciple_Tools_Locations_Endpoints
+ * @class   MM_Endpoints
  * @version 0.1
  * @since   0.1
- * @package Disciple_Tools
+ * @package MM_Endpoints
  * @author  Chasm.Solutions & Kingdom.Training
  */
 
@@ -15,11 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly
 class MM_Endpoints {
 
     private $version = 1;
-    private $context = "dt";
+    private $context = "mm";
     private $namespace;
 
     /**
-     * Disciple_Tools_Locations_Endpoints The single instance of Disciple_Tools_Locations_Endpoints.
+     * MM_Endpoints The single instance of MM_Endpoints.
      *
      * @var    object
      * @access private
@@ -28,13 +28,13 @@ class MM_Endpoints {
     private static $_instance = null;
 
     /**
-     * Main Disciple_Tools_Locations_Endpoints Instance
+     * Main MM_Endpoints Instance
      *
-     * Ensures only one instance of Disciple_Tools_Locations_Endpoints is loaded or can be loaded.
+     * Ensures only one instance of MM_Endpoints is loaded or can be loaded.
      *
      * @since  0.1
      * @static
-     * @return Disciple_Tools_Locations_Endpoints instance
+     * @return MM_Endpoints instance
      */
     public static function instance () {
         if ( is_null( self::$_instance ) ) {
@@ -57,100 +57,40 @@ class MM_Endpoints {
 
     public function add_api_routes () {
         $version = '1';
-        $namespace = 'dt/v' . $version;
+        $namespace = 'mm/v' . $version;
         $base = 'locations';
         register_rest_route(
-            $namespace, '/' . $base . '/findbyaddress', [
+            $namespace, '/' . $base . '/getcountryadmin1', [
             [
                 'methods'         => WP_REST_Server::CREATABLE,
-                'callback'        => [ $this, 'find_by_address' ],
-            ],
-             ]
-        );
-        register_rest_route(
-            $namespace, '/' . $base. '/gettractmap', [
-            [
-                'methods'         => WP_REST_Server::CREATABLE,
-                'callback'        => [ $this, 'get_tract_map' ],
-
-            ],
-             ]
-        );
-        register_rest_route(
-            $namespace, '/' . $base. '/getmapbygeoid', [
-            [
-                'methods'         => WP_REST_Server::CREATABLE,
-                'callback'        => [ $this, 'get_map_by_geoid' ],
-
+                'callback'        => [ $this, 'get_country_admin_1' ],
             ],
              ]
         );
     }
 
     /**
-     * Get tract from submitted address
+     * Get admin level 1 for a country
      *
      * @param  WP_REST_Request $request
      * @access public
      * @since  0.1
      * @return string|WP_Error The contact on success
      */
-    public function find_by_address ( WP_REST_Request $request ){
+    public function get_country_admin_1 ( WP_REST_Request $request ){
         $params = $request->get_params();
-        if (isset( $params['address'] )){
-            $result = Disciple_Tools_Locations::get_tract_by_address( $params['address'] );
+        if (isset( $params['CntyID'] )){
+            $result = MM_Controller::get_country_admin_1( $params['CntyID'] );
             if ($result["status"] == 'OK'){
-                return $result["tract"];
+                return $result["geojson"];
             } else {
-                return new WP_Error( "tract_status_error", $result["message"], ['status' => 400] );
+                return new WP_Error( "country_error", $result["message"], ['status' => 400] );
             }
         } else {
-            return new WP_Error( "tract_param_error", "Please provide a valid address", ['status' => 400] );
+            return new WP_Error( "country_param_error", "Please provide a valid country (WorldID)", ['status' => 400] );
         }
     }
 
-    /**
-     * Get tract from submitted address
-     *
-     * @param  WP_REST_Request $request
-     * @access public
-     * @since  0.1
-     * @return string|WP_Error The contact on success
-     */
-    public function get_tract_map ( WP_REST_Request $request ){
-        $params = $request->get_params();
-        if (isset( $params['address'] )){
-            $result = Disciple_Tools_Locations::get_tract_map( $params['address'] );
-            if ($result["status"] == 'OK'){
-                return $result;
-            } else {
-                return new WP_Error( "map_status_error", $result["message"], ['status' => 400] );
-            }
-        } else {
-            return new WP_Error( "map_param_error", "Please provide a valid address", ['status' => 400] );
-        }
-    }
-
-    /**
-     * Get map by geoid
-     *
-     * @param  WP_REST_Request $request
-     * @access public
-     * @since  0.1
-     * @return string|WP_Error The contact on success
-     */
-    public function get_map_by_geoid ( WP_REST_Request $request ){
-        $params = $request->get_params();
-        if (isset( $params['geoid'] )){
-            $result = Disciple_Tools_Locations::get_map_by_geoid( $params );
-            if ($result["status"] == 'OK'){
-                return $result;
-            } else {
-                return new WP_Error( "map_status_error", $result["message"], ['status' => 400] );
-            }
-        } else {
-            return new WP_Error( "map_param_error", "Please provide a valid address", ['status' => 400] );
-        }
-    }
+    
 
 }

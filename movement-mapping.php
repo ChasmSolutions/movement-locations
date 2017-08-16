@@ -115,11 +115,16 @@ class Movement_Mapping {
         if ( is_admin() ) {
             require_once( 'includes/admin-menu.php' );
             $this->menu = MM_Admin_Menu::instance();
-    
-        
         
         } // if admin
+        
         require_once( 'includes/mm-template.php' );
+        
+        // REST API
+        require_once ( 'includes/mm-controller.php' );
+        require_once ( 'includes/mm-endpoints.php' );
+        $this->endpoints = MM_Endpoints::instance();
+        
     }
     
     

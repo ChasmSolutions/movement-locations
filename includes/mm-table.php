@@ -38,7 +38,8 @@ class MM_Table extends WP_List_Table {
             case 'Region':
             case 'Field':
             case 'Notes':
-            case 'last_sync':
+            case 'Last_Sync':
+            case 'Sync_Source':
                 return $item[$column_name];
             case 'Center':
                 return !empty( $item['Cen_x'] ) ? '<a href="https://www.google.com/maps/@'.$item['Cen_y'].','.$item['Cen_x'].',10z" target="_blank">' . $item['Cen_x'] . ', ' . $item['Cen_y'] . '</a>' : '';
@@ -46,7 +47,7 @@ class MM_Table extends WP_List_Table {
                 return !empty( $item[$column_name] ) ? 'Yes' : 'No';
             case 'OBJECTID_1':
             case 'OBJECTID':
-                return !empty( $item[$column_name] ) ? $item[$column_name] . ' (<a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/'.$item[$column_name].'">html</a>, <a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/'.$item[$column_name].'?f=pjson">json</a>)' : '';
+                return !empty( $item[$column_name] ) ? $item[$column_name] . ' (<a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/query?outFields=*&returnGeometry=true&resultRecordCount=1&f=html&where=WorldID=\''.$item['WorldID'].'\'">html</a>, <a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/query?outFields=*&returnGeometry=true&resultRecordCount=1&f=pgeojson&where=WorldID=\''.$item['WorldID'].'\'">json</a>)' : '';
             case 'Population':
                 return !empty( $item[$column_name] ) ? number_format_i18n( $item[$column_name] ) : '';
             default:
@@ -106,7 +107,8 @@ class MM_Table extends WP_List_Table {
             'OBJECTID_1'    => 'OBJECTID_1',
 //            'OBJECTID'      => 'OBJECTID',
 //            'Notes'         => 'Notes',
-            'last_sync'         => 'last_sync',
+            'Last_Sync'         => 'Last_Sync',
+            'Sync_Source'         => 'Sync_Source',
         );
         return $columns;
     }
