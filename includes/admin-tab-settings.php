@@ -29,7 +29,9 @@ class MM_Admin_Tab_Settings
         $html .= '<div id="post-body-content">';
         $worldID = "'AFG-BAA'";
         $oz_record = json_decode( file_get_contents( 'https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/query?where=WorldID='.$worldID.'&outFields=*&returnGeometry=true&resultRecordCount=1&f=pgeojson' ) );
-        print '<pre>'; print_r($oz_record); print '</pre>';
+        print '<pre>';
+        print_r( $oz_record );
+        print '</pre>';
         
         $html .= '</div><!-- end post-body-content --><div id="postbox-container-1" class="postbox-container">';
         

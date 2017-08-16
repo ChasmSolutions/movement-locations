@@ -44,17 +44,17 @@ function ml_get_admin_tree () {
     
     $tree = array();
     
-    $countries = $wpdb->get_results( "SELECT CntyID, Cnty_Name FROM $wpdb->mm WHERE WorldID LIKE '___';" );
+    $countries = $wpdb->get_results( "SELECT CntyID, Cnty_Name FROM $wpdb->mm WHERE WorldID LIKE '___'" );
     foreach ( $countries as $country ) {
         
         $CntyID = $country->CntyID;
         $Cnty_Name = $country->Cnty_Name;
         
         $tree[ $Cnty_Name ] = array(
-            'admin1' => $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___' AND CntyID = '$CntyID';" ),
-            'admin2' => $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___-___' AND CntyID = '$CntyID';" ),
-            'admin3' => $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___-___-___' AND CntyID = '$CntyID';" ),
-            'admin4' => $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___-___-___-___' AND CntyID = '$CntyID';" ),
+            'admin1' => $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___' AND CntyID = '$CntyID'" ),
+            'admin2' => $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___-___' AND CntyID = '$CntyID'" ),
+            'admin3' => $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___-___-___' AND CntyID = '$CntyID'" ),
+            'admin4' => $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE WorldID LIKE '___-___-___-___-___' AND CntyID = '$CntyID'" ),
         );
     }
     
@@ -64,9 +64,9 @@ function ml_get_admin_tree () {
 function mm_sync_by_oz_objectid ( $worldID ) {
     global $wpdb;
     
-    $worldID = "'" . trim($worldID) . "'";
+    $worldID = "'" . trim( $worldID ) . "'";
     $oz_record = json_decode( file_get_contents( 'https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/query?outFields=*&returnGeometry=true&resultRecordCount=1&f=pgeojson&where=WorldID='.$worldID ) );
-    if(empty( $oz_record->features)) {
+    if(empty( $oz_record->features )) {
         return 'no records found';
     }
     
@@ -96,7 +96,7 @@ function mm_sync_by_oz_objectid ( $worldID ) {
             'OBJECTID_1' => $oz_record->features[0]->properties->OBJECTID_1,
             'OBJECTID' => $oz_record->features[0]->properties->OBJECTID,
             'Notes' => $oz_record->features[0]->properties->Notes,
-            'Last_Sync' => date("Y-m-d H:i:s"),
+            'Last_Sync' => date( "Y-m-d H:i:s" ),
             'Sync_Source' => '4KArcGIS',
         ),
         array(

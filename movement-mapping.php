@@ -121,8 +121,8 @@ class Movement_Mapping {
         require_once( 'includes/mm-template.php' );
         
         // REST API
-        require_once ( 'includes/mm-controller.php' );
-        require_once ( 'includes/mm-endpoints.php' );
+        require_once( 'includes/mm-controller.php' );
+        require_once( 'includes/mm-endpoints.php' );
         $this->endpoints = MM_Endpoints::instance();
         
     }

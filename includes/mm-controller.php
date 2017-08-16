@@ -20,8 +20,21 @@ class MM_Controller {
      * @return array
      */
     public static function get_country_admin_1 ( $CntyID ) {
+        global $wpdb;
         
         // query $CntyID and filter for admin1
+        $data = $wpdb->get_results(
+            $wpdb->prepare( "
+                    SELECT * 
+                    FROM $wpdb->mm
+                    WHERE (`WorldID` LIKE '___'
+                      OR `WorldID` LIKE '___-___')
+                      AND `CntyID` = '%s'
+                    ",
+                $CntyID
+            ),
+            ARRAY_A
+        );
         
         //prepare returns in foreach loop for geojson
         
@@ -120,7 +133,7 @@ class MM_Controller {
         
         return [
             'status' => 'OK',
-            'geojson' => $geojson,
+            'geojson' => $data,
         ];
     }
     
