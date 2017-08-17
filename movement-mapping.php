@@ -12,6 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) { exit; // Exit if accessed directly
 }
 
 /**
+ * Activation Hook
+ */
+function activate_mm( $network_wide ) {
+    require_once plugin_dir_path( __FILE__ ) . 'includes/activate.php';
+    MM_Activate::activate( $network_wide );
+}
+register_activation_hook( __FILE__, 'activate_mm' );
+
+/**
  * Singleton class for setting up the plugin.
  *
  * @since  1.0
@@ -187,8 +196,6 @@ class Movement_Mapping {
         // Internationalize the text strings used.
         add_action( 'plugins_loaded', array( $this, 'i18n' ), 2 );
         
-        // Register activation hook.
-        register_activation_hook( __FILE__, array( $this, 'activation' ) );
     }
     
     /**
@@ -202,16 +209,6 @@ class Movement_Mapping {
         load_plugin_textdomain( 'movement_mapping', false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ). 'languages' );
     }
     
-    /**
-     * Method that runs only when the plugin is activated.
-     *
-     * @since  1.0
-     * @access public
-     * @return void
-     */
-    public function activation() {
-        
-    }
 }
 
 /**
