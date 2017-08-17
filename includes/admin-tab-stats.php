@@ -40,7 +40,7 @@ class MM_Admin_Tab_Stats
             ),
             ARRAY_A
         );
-        print_r($data);
+        print_r( $data );
         
         $html .= '</div><!-- end post-body-content --><div id="postbox-container-1" class="postbox-container">';
         

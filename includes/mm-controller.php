@@ -44,7 +44,7 @@ class MM_Controller {
         }
         
         // query $CntyID and filter for admin1
-        $data = $wpdb->get_results("SELECT * FROM $wpdb->mm $where", ARRAY_A );
+        $data = $wpdb->get_results( "SELECT * FROM $wpdb->mm $where", ARRAY_A );
     
         $geojson = [
             'type' => 'FeatureCollection',
@@ -59,7 +59,7 @@ class MM_Controller {
                     'geometry' => [
                         'type' => 'Polygon',
                         'coordinates' =>
-                            json_decode($record['geometry'])
+                            json_decode( $record['geometry'] )
                         
                     ],
                     'properties' => [

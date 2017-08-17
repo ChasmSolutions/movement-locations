@@ -30,7 +30,7 @@ class MM_Admin_Tab_Settings
     
         global $wpdb;
         $where = "WHERE (`WorldID` LIKE '___' OR `WorldID` LIKE '___-___') AND `CntyID` = 'ABW'";
-        $data = $wpdb->get_results("SELECT * FROM $wpdb->mm $where", ARRAY_A );
+        $data = $wpdb->get_results( "SELECT * FROM $wpdb->mm $where", ARRAY_A );
         print '<pre>';
         print_r( $data );
         print '</pre>';
