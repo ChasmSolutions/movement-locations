@@ -23,7 +23,6 @@ class MM_Activate {
      */
     public static function activate( $network_wide ) {
         global $wpdb;
-        $MM = movement_mapping();
         
         /**
          * Activate database creation for Disciple Tools Activity logs
@@ -35,11 +34,11 @@ class MM_Activate {
             $blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
             foreach ( $blog_ids as $blog_id ) {
                 switch_to_blog( $blog_id );
-                self::create_tables( $MM->version );
+                self::create_tables( movement_mapping()->version );
                 restore_current_blog();
             }
         } else {
-            self::create_tables( $MM->version );
+            self::create_tables( movement_mapping()->version );
         }
     }
     
@@ -79,61 +78,43 @@ class MM_Activate {
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         
         /* Activity Log */
-        $table_name = $wpdb->prefix . 'dt_activity_log';
+        $table_name = $wpdb->prefix . 'mm';
         if( $wpdb->get_var( "show tables like '{$table_name}'" ) != $table_name ) {
             $sql1 = "CREATE TABLE IF NOT EXISTS `{$table_name}` (
-					  `histid` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-					  `user_caps` varchar(70) NOT NULL DEFAULT 'guest',
-					  `action` varchar(255) NOT NULL,
-					  `object_type` varchar(255) NOT NULL,
-					  `object_subtype` varchar(255) NOT NULL DEFAULT '',
-					  `object_name` varchar(255) NOT NULL,
-					  `object_id` int(11) NOT NULL DEFAULT '0',
-					  `user_id` int(11) NOT NULL DEFAULT '0',
-					  `hist_ip` varchar(55) NOT NULL DEFAULT '127.0.0.1',
-					  `hist_time` int(11) NOT NULL DEFAULT '0',
-					  `object_note` VARCHAR(255) NOT NULL DEFAULT '0',
-					  `meta_id` BIGINT(20) NOT NULL DEFAULT '0',
-					  `meta_key` VARCHAR(100) NOT NULL DEFAULT '0',
-					  `meta_value` VARCHAR(255) NOT NULL DEFAULT '0',
-					  `meta_parent` BIGINT(20) NOT NULL DEFAULT '0',
-					  PRIMARY KEY (`histid`)
-				) ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+					  `WorldID` varchar(50) CHARACTER SET utf8mb4 NOT NULL,
+                      `Zone_Name` varchar(50) CHARACTER SET utf8mb4 NOT NULL,
+                      `CntyID` varchar(3) CHARACTER SET utf8mb4 NOT NULL,
+                      `Cnty_Name` varchar(50) CHARACTER SET utf8mb4 NOT NULL,
+                      `Adm1ID` varchar(7) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm1_Name` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm2ID` varchar(11) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm2_Name` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm3ID` varchar(15) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm3_Name` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm4ID` varchar(19) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm4_Name` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `World` varchar(1) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Population` float DEFAULT NULL,
+                      `Shape_Leng` float DEFAULT NULL,
+                      `Cen_x` float DEFAULT NULL,
+                      `Cen_y` float DEFAULT NULL,
+                      `Region` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Field` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `geometry` longtext CHARACTER SET utf8mb4,
+                      `OBJECTID_1` int(11) DEFAULT NULL,
+                      `OBJECTID` int(11) DEFAULT NULL,
+                      `Notes` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Last_Sync` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                      `Sync_Source` varchar(25) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      PRIMARY KEY (`WorldID`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;";
             
             dbDelta( $sql1 );
             
-            update_option( 'dt_activity_log_db_version', $version );
+            update_option( 'mm_db_version', $version );
         }
         
         
-        /* Report Log Table */
-        $table_name = $wpdb->prefix . 'dt_reports';
-        if( $wpdb->get_var( "show tables like '{$table_name}'" ) != $table_name ) {
-            $sql2 = "CREATE TABLE IF NOT EXISTS `{$table_name}` (
-					  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-					  `report_date` DATE NOT NULL,
-					  `report_source` VARCHAR(55) NOT NULL,
-					  `report_subsource` VARCHAR(100) NOT NULL,
-					  PRIMARY KEY (`id`)
-				) ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            dbDelta( $sql2 );
-            update_option( 'dt_reports_db_version', $version );
-        }
-        
-        
-        /* Report Meta Log Table */
-        $table_name = $wpdb->prefix . 'dt_reportmeta';
-        if( $wpdb->get_var( "show tables like '{$table_name}'" ) != $table_name ) {
-            $sql3 = "CREATE TABLE IF NOT EXISTS `{$table_name}` (
-					  `meta_id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-					  `report_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
-					  `meta_key` VARCHAR(255) NOT NULL,
-					  `meta_value` LONGTEXT,
-					  PRIMARY KEY (`meta_id`)
-				) ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            dbDelta( $sql3 );
-            update_option( 'dt_reportmeta_db_version', $version );
-        }
         
     }
     

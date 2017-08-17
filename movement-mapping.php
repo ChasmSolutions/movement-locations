@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; // Exit if accessed directly
  * Activation Hook
  */
 function activate_mm( $network_wide ) {
-    require_once plugin_dir_path( __FILE__ ) . 'includes/activate.php';
+    require_once 'includes/activate.php';
     MM_Activate::activate( $network_wide );
 }
 register_activation_hook( __FILE__, 'activate_mm' );
