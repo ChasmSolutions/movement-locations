@@ -1,3 +1,4 @@
+![Travis-Ci](https://travis-ci.org/ChasmSolutions/movement-mapping.svg?branch=master>)
 # Movement Locations (API)
 
 The api to collect locations data from various mapping providers and store them for Disciple.Tools.
