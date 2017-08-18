@@ -27,20 +27,6 @@ class MM_Admin_Tab_Stats
         $html .= '<div id="post-body-content">';
         $html .= $this->stats_box().'';
         
-        global $wpdb;
-        $data = $wpdb->get_results(
-            $wpdb->prepare( "
-                    SELECT * 
-                    FROM $wpdb->mm
-                    WHERE (`WorldID` LIKE '___'
-                      OR `WorldID` LIKE '___-___')
-                      AND `CntyID` = '%s'
-                    ",
-                'ABW'
-            ),
-            ARRAY_A
-        );
-        print_r( $data );
         
         $html .= '</div><!-- end post-body-content --><div id="postbox-container-1" class="postbox-container">';
         
