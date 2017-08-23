@@ -129,3 +129,8 @@ function mm_sync_by_oz_objectid ( $worldID ) {
     
     return $result;
 }
+
+
+function mm_match_usa_state_code ( $statefp ) {
+    
+}

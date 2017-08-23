@@ -20,8 +20,8 @@ class MM_Admin_Tab_Sync
      */
     public function page_contents()
     {
-        if (isset($_POST) ) {
-            if (isset($_POST['run_script'])) {
+        if (isset( $_POST ) ) {
+            if (isset( $_POST['run_script'] )) {
                 $this->script();
             }
         }
@@ -46,68 +46,101 @@ class MM_Admin_Tab_Sync
     
     public function script () {
         global $wpdb;
-        
+        return $this->install_kml();
         
     }
     
     public function install_kml () {
         global $wpdb;
+        $ring = [];
         
-            $directory = dt_get_usa_meta(); // get directory;
-            $file = $directory->USA_states->{$state}->file;
-        
-            $kml_object = simplexml_load_file( $directory->base_url . $file ); // get xml from amazon
-        
-            foreach ($kml_object->Document->Folder->Placemark as $place) {
+        $kml_object = simplexml_load_file( plugin_dir_path( __FILE__ ) . 'kml/cb_2016_us_county_500k.kml' ); // get xml from amazon
+    
+        foreach ($kml_object->Document->Folder->Placemark as $place) {
             
-            
-            // Parse Coordinates
-            $value = '';
-            if ($place->Polygon) {
-                $value .= $place->Polygon->outerBoundaryIs->LinearRing->coordinates;
-            } elseif ($place->MultiGeometry) {
-                foreach ($place->MultiGeometry->Polygon as $polygon) {
-                    $value .= $polygon->outerBoundaryIs->LinearRing->coordinates;
-                }
-            }
-        
-            $value_array = substr( trim( $value ), 0, -2 ); // remove trailing ,0 so as not to create an empty array
-            unset( $value );
-            $value_array = explode( ',0.0 ', $value_array ); // create array from coordinates string
-        
-            $coordinates = '['; //Create JSON format coordinates. Display in Google Map
-            foreach ($value_array as $va) {
-                if (!empty( $va )) {
-                    $coord = explode( ',', $va );
-                    $coordinates .= '{"lat": ' . $coord[1] . ', "lng": ' . $coord[0] . '},';
-                }
-            }
-        
-            unset( $value_array );
-            $coordinates = substr( trim( $coordinates ), 0, -1 );
-            $coordinates .= ']'; // close JSON array
-        
-            // Find County Post ID
-            $geoid = $place->ExtendedData->SchemaData->SimpleData[4];
-            $state_county_key = substr( $geoid, 0, 5 );
-            $post_id = $wpdb->get_var( "SELECT ID FROM $wpdb->posts WHERE post_type = 'locations' AND post_name = '$state_county_key'" );
-        
-            $wpdb->insert(
-                $wpdb->postmeta,
-                [
-                    'post_id' => $post_id,
-                    'meta_key' => 'polygon_'.$geoid,
-                    'meta_value' => $coordinates,
-                ]
+            $STATE = $place->ExtendedData->SchemaData->SimpleData[0];
+            $COUNTY  = $place->ExtendedData->SchemaData->SimpleData[1];
+            $data[]  = $place->ExtendedData->SchemaData->SimpleData[2];
+            $data[]  = $place->ExtendedData->SchemaData->SimpleData[3];
+            $data[] = $place->ExtendedData->SchemaData->SimpleData[4];
+            $NAME = $place->ExtendedData->SchemaData->SimpleData[5];
+            $data[] = $place->ExtendedData->SchemaData->SimpleData[6];
+            $data[] = $place->ExtendedData->SchemaData->SimpleData[7];
+            $data[] = $place->ExtendedData->SchemaData->SimpleData[8];
+    
+            // Create the record array
+            $fields = array(
+                'WorldID' => '',
+                'Zone_Name' => '',
+                'CntyID' => '',
+                'Cnty_Name' => '',
+                'Adm1ID' => '',
+                'Adm1_Name' => '',
+                'Adm2ID' => '',
+                'Adm2_Name' => '',
+                'Adm3ID' => '',
+                'Adm3_Name' => '',
+                'Adm4ID' => '',
+                'Adm4_Name' => '',
+                'World' => '',
+                'Population' => '',
+                'Shape_Leng' => '',
+                'Cen_x' => '',
+                'Cen_y' => '',
+                'Region' => '',
+                'Field' => '',
+                'geometry' => '',
+                'OBJECTID_1' => '',
+                'OBJECTID' => '',
+                'Notes' => $place->ExtendedData->SchemaData->SimpleData['NAME'],
+                'Last_Sync' => '',
+                'Sync_Source' => '',
             );
-        
-        } // end foreach tract
+            print $STATE . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( $COUNTY, -1 ) . '<br>';
+//            print '<pre>'; print_r($data); print '</pre>';
+            
+            // Check if record array exists in database, and when it was last updated
+            
+            
     
-        unset( $kml_object );
+            // Parse and create JSON coordinate record.
+//            if ( $place->Polygon ) {
+//                $ring = [];
+//                $polygon = [];
+//                $values = explode( " ", $place->Polygon->outerBoundaryIs->LinearRing->coordinates );
+//                foreach ( $values as $value ) {
+//                    $value = substr($value, 0, -4);
+//                    $coords = explode( ",", $value );
+//
+//                    $polygon[] = $coords;
+//
+//                }
+//                $ring[] = $polygon;
+//            }
+//            elseif ( $place->MultiGeometry ) {
+//                $ring = [];
+//                foreach ( $place->MultiGeometry->Polygon as $single_polygon ) {
+//                    $polygon = [];
+//                    $values = explode( " ", $single_polygon->outerBoundaryIs->LinearRing->coordinates );
+//                    foreach ( $values as $value ) {
+//                        $value = substr($value, 0, -4);
+//                        $coords = explode( ",", $value );
+//
+//                        $polygon[] = $coords;
+//
+//                    }
+//                    $ring[] = $polygon;
+//                }
+//            }
+//            $json_coordinates = json_encode($ring);
+            
+           
+            // Insert record to table row
+            
+        }
     
-        update_option( '_installed_us_tracts_'.$state, true, false );
     
-        return 'Success';
+        return 'End';
         
     }
     
