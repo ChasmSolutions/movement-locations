@@ -28,12 +28,7 @@ class MM_Admin_Tab_Settings
         $html .= '<div class="wrap"><div id="poststuff"><div id="post-body" class="metabox-holder columns-2">';
         $html .= '<div id="post-body-content">';
     
-        global $wpdb;
-        $where = "WHERE (`WorldID` LIKE '___' OR `WorldID` LIKE '___-___') AND `CntyID` = 'ABW'";
-        $data = $wpdb->get_results( "SELECT * FROM $wpdb->mm $where", ARRAY_A );
-        print '<pre>';
-        print_r( movement_mapping()->version );
-        print '</pre>';
+        
         
         $html .= '</div><!-- end post-body-content --><div id="postbox-container-1" class="postbox-container">';
         
