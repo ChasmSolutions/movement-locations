@@ -22,7 +22,7 @@ class MM_Admin_Tab_Sync
     {
         if (isset( $_POST ) ) {
             if (isset( $_POST['run_script'] )) {
-                $this->script();
+                $this->install_kml();
             }
         }
         $html = '';
@@ -44,103 +44,173 @@ class MM_Admin_Tab_Sync
         
     }
     
-    public function script () {
-        global $wpdb;
-        return $this->install_kml();
-        
-    }
-    
     public function install_kml () {
         global $wpdb;
+        $table = 'wp_mm_usa_scratch';
         $ring = [];
+        $error = '';
         
         $kml_object = simplexml_load_file( plugin_dir_path( __FILE__ ) . 'kml/cb_2016_us_county_500k.kml' ); // get xml from amazon
-    
+        
         foreach ($kml_object->Document->Folder->Placemark as $place) {
             
             $STATE = $place->ExtendedData->SchemaData->SimpleData[0];
             $COUNTY  = $place->ExtendedData->SchemaData->SimpleData[1];
-            $data[]  = $place->ExtendedData->SchemaData->SimpleData[2];
-            $data[]  = $place->ExtendedData->SchemaData->SimpleData[3];
-            $data[] = $place->ExtendedData->SchemaData->SimpleData[4];
             $NAME = $place->ExtendedData->SchemaData->SimpleData[5];
-            $data[] = $place->ExtendedData->SchemaData->SimpleData[6];
-            $data[] = $place->ExtendedData->SchemaData->SimpleData[7];
-            $data[] = $place->ExtendedData->SchemaData->SimpleData[8];
+            
+            if(mm_convert_usa_state_code ( $STATE )) { // tests if it is valid US state and not subterritory
     
-            // Create the record array
-            $fields = array(
-                'WorldID' => '',
-                'Zone_Name' => '',
-                'CntyID' => '',
-                'Cnty_Name' => '',
-                'Adm1ID' => '',
-                'Adm1_Name' => '',
-                'Adm2ID' => '',
-                'Adm2_Name' => '',
-                'Adm3ID' => '',
-                'Adm3_Name' => '',
-                'Adm4ID' => '',
-                'Adm4_Name' => '',
-                'World' => '',
-                'Population' => '',
-                'Shape_Leng' => '',
-                'Cen_x' => '',
-                'Cen_y' => '',
-                'Region' => '',
-                'Field' => '',
-                'geometry' => '',
-                'OBJECTID_1' => '',
-                'OBJECTID' => '',
-                'Notes' => $place->ExtendedData->SchemaData->SimpleData['NAME'],
-                'Last_Sync' => '',
-                'Sync_Source' => '',
-            );
-            print $STATE . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( $COUNTY, -1 ) . '<br>';
-//            print '<pre>'; print_r($data); print '</pre>';
-            
-            // Check if record array exists in database, and when it was last updated
-            
-            
+                // Create the record array
+                $WorldID = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( $COUNTY, -1 );
+                $Zone_Name = $NAME;
+                $CntyID = 'USA';
+                $Cnty_Name = 'United States of America';
+                $Adm1ID = mm_convert_usa_state_code( $STATE );
+                $Adm1_Name = mm_convert_usa_state_name( $STATE );
+                $Adm2ID = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( $COUNTY, -1 );
+                $Adm2_Name = $NAME;
+                $Adm3ID = '';
+                $Adm3_Name = '';
+                $Adm4ID = '';
+                $Adm4_Name = '';
+                $World = 'C';
+                $Population = '';
+                $Shape_Leng = '';
+                $Cen_x = '';
+                $Cen_y = '';
+                $Region = 'North America Region';
+                $Field = 'The Americas Field';
+                $geometry = '';
+                $OBJECTID_1 = '';
+                $OBJECTID = '';
+                $Notes = 'cb_2016_us_county_500k.kml';
+                $Last_Sync = date( 'Y-m-d H:i:s' );
+                $Sync_Source = 'US Census KML';
+                
+                $duplicate_check = $wpdb->get_var("SELECT WorldID FROM $table WHERE WorldID = '$WorldID'");
+                if ( !is_null($duplicate_check) ) {
+                    $last_digit = substr($WorldID, -1);
+                    $last_digit++;
+                    if($last_digit >= 10) {$last_digit = 1; }
+                    $WorldID = substr($WorldID, 0, -1) . $last_digit;
+                    $duplicate_check = $wpdb->get_var("SELECT WorldID FROM $table WHERE WorldID = '$WorldID'");
+                    if ( !is_null($duplicate_check) ) {
+                        $WorldID = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( strtoupper( $NAME ), 4 );
+                        $duplicate_check = $wpdb->get_var("SELECT WorldID FROM $table WHERE WorldID = '$WorldID'");
+                        if ( !is_null($duplicate_check) ) {
+                            $WorldID = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( strtoupper( $NAME ), 5 );
+                            $duplicate_check = $wpdb->get_var("SELECT WorldID FROM $table WHERE WorldID = '$WorldID'");
+                            if ( !is_null($duplicate_check) ) {
+                                $error = 'duplicate with ' . mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( $COUNTY, -1 ) . ' | ';
+                            }
+                        }
+                    }
+                }
     
-            // Parse and create JSON coordinate record.
-//            if ( $place->Polygon ) {
-//                $ring = [];
-//                $polygon = [];
-//                $values = explode( " ", $place->Polygon->outerBoundaryIs->LinearRing->coordinates );
-//                foreach ( $values as $value ) {
-//                    $value = substr($value, 0, -4);
-//                    $coords = explode( ",", $value );
-//
-//                    $polygon[] = $coords;
-//
-//                }
-//                $ring[] = $polygon;
-//            }
-//            elseif ( $place->MultiGeometry ) {
-//                $ring = [];
-//                foreach ( $place->MultiGeometry->Polygon as $single_polygon ) {
-//                    $polygon = [];
-//                    $values = explode( " ", $single_polygon->outerBoundaryIs->LinearRing->coordinates );
-//                    foreach ( $values as $value ) {
-//                        $value = substr($value, 0, -4);
-//                        $coords = explode( ",", $value );
-//
-//                        $polygon[] = $coords;
-//
-//                    }
-//                    $ring[] = $polygon;
-//                }
-//            }
-//            $json_coordinates = json_encode($ring);
+    
+                // Parse and create JSON coordinate record.
+                if ( $place->Polygon ) {
+                    $ring = [];
+                    $polygon = [];
+                    $values = explode( " ", $place->Polygon->outerBoundaryIs->LinearRing->coordinates );
+                    foreach ( $values as $value ) {
+                        $value = substr( $value, 0, -4 );
+                        $coords = explode( ",", $value );
             
-           
-            // Insert record to table row
+                        $polygon[] = $coords;
+            
+                    }
+                    $ring[] = $polygon;
+                }
+                elseif ( $place->MultiGeometry ) {
+                    $ring = [];
+                    foreach ( $place->MultiGeometry->Polygon as $single_polygon ) {
+                        $polygon = [];
+                        $values = explode( " ", $single_polygon->outerBoundaryIs->LinearRing->coordinates );
+                        foreach ( $values as $value ) {
+                            $value = substr( $value, 0, -4 );
+                            $coords = explode( ",", $value );
+                
+                            $polygon[] = $coords;
+                
+                        }
+                        $ring[] = $polygon;
+                    }
+                }
+    
+                $geometry = json_encode( $ring, JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK );
+    
+                $center = mm_find_center( $geometry );
+                $Cen_x = $center[ 'Cen_x' ];
+                $Cen_y = $center[ 'Cen_y' ];
+    
+                // Create SQL and insert statement
+                $insert_sql = "
+                REPLACE INTO $table
+                (
+                WorldID,
+                Zone_Name,
+                CntyID,
+                Cnty_Name,
+                Adm1ID,
+                Adm1_Name,
+                Adm2ID,
+                Adm2_Name,
+                Adm3ID,
+                Adm3_Name,
+                Adm4ID,
+                Adm4_Name,
+                World,
+                Population,
+                Shape_Leng,
+                Cen_x,
+                Cen_y,
+                Region,
+                Field,
+                geometry,
+                OBJECTID_1,
+                OBJECTID,
+                Notes,
+                Last_Sync,
+                Sync_Source
+                )
+                VALUES
+                (
+                '$WorldID',
+                '$Zone_Name',
+                '$CntyID',
+                '$Cnty_Name',
+                '$Adm1ID',
+                '$Adm1_Name',
+                '$Adm2ID',
+                '$Adm2_Name',
+                '$Adm3ID',
+                '$Adm3_Name',
+                '$Adm4ID',
+                '$Adm4_Name',
+                '$World',
+                '$Population',
+                '$Shape_Leng',
+                '$Cen_x',
+                '$Cen_y',
+                '$Region',
+                '$Field',
+                '$geometry',
+                '$OBJECTID_1',
+                '$OBJECTID',
+                '$Notes',
+                '$Last_Sync',
+                '$Sync_Source'
+                )
+                ";
+    
+                $wpdb->query( $insert_sql );
+                
+            }
             
         }
-    
-    
-        return 'End';
+        
+        print_r($wpdb->rows_affected . $wpdb->last_error); print $error;
         
     }
     

@@ -2,3 +2,4 @@
 /wp-content/plugins/movement-mapping/includes/kml/cb_2016_us_county_500k.kml
 /json/
 /kml/
+!/kml/
