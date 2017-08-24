@@ -93,9 +93,9 @@ class MM_Admin_Menu {
         if ($tab == 'settings' || !isset( $tab )) {$html .= 'nav-tab-active';}
         $html .= '">Settings</a>';
 
-        $html .= $tab_link_pre . 'sync' . $tab_link_post;
-        if ($tab == 'sync' ) {$html .= 'nav-tab-active';}
-        $html .= '">Sync</a>';
+        $html .= $tab_link_pre . 'import' . $tab_link_post;
+        if ($tab == 'import' ) {$html .= 'nav-tab-active';}
+        $html .= '">Import</a>';
     
 
         $html .= '</h2>';
@@ -110,9 +110,9 @@ class MM_Admin_Menu {
          */
         switch ($tab) {
 
-            case "sync":
-                require_once( 'admin-tab-sync.php' );
-                $class_object = new MM_Admin_Tab_Sync();
+            case "import":
+                require_once( 'admin-tab-import.php' );
+                $class_object = new MM_Admin_Tab_Import();
                 $html .= '' . $class_object->page_contents();
                 break;
             case "stats":

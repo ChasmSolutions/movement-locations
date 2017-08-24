@@ -101,11 +101,10 @@ class MM_Activate {
                       `Region` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
                       `Field` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
                       `geometry` longtext CHARACTER SET utf8mb4,
-                      `OBJECTID_1` int(11) DEFAULT NULL,
-                      `OBJECTID` int(11) DEFAULT NULL,
                       `Notes` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
                       `Last_Sync` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                       `Sync_Source` varchar(25) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Source_Key` varchar(25) CHARACTER SET utf8mb4 DEFAULT NULL,
                       PRIMARY KEY (`WorldID`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;";
             
