@@ -67,6 +67,7 @@ class Disciple_Tools_Google_Geolocation {
         }
 
     }
+    
 
     public static function url_get_contents ( $Url ) {
         if (!function_exists( 'curl_init' )){

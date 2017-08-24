@@ -21,7 +21,7 @@ class MM_Admin_Tab_Import
      * @since   0.1
      */
     public function __construct () {
-        $this->table = 'wp_mm_usa_scratch';
+        $this->table = 'wp_mm';
         
     } // End __construct()
     
@@ -521,6 +521,7 @@ class MM_Admin_Tab_Import
             // Lookup County WorldID Code by GEOID
             $COUNTY_GEOID = $STATE . $COUNTY;
             $COUNTY_WORLDID = $wpdb->get_var( "SELECT WorldID FROM $table WHERE Source_Key = '$COUNTY_GEOID'" );
+            $COUNTY_NAME = $wpdb->get_var( "SELECT Zone_Name FROM $table WHERE Source_Key = '$COUNTY_GEOID'" );
     
             // Parse and create JSON coordinate record.
             if ( $place->Polygon ) {
@@ -559,80 +560,30 @@ class MM_Admin_Tab_Import
             $Cen_x = $center[ 'Cen_x' ];
             $Cen_y = $center[ 'Cen_y' ];
             
-            // Google query to get neighborhood name and create tract code
-            
-            
-            // Set Tract Code
-            $TRACT_CODE = 'AAA';
-            $TRACT_NAME = '';
 
             // Create the record array
-            $WorldID = $COUNTY_WORLDID . '-' . $TRACT_CODE;
-            $Zone_Name = $NAME;
+            $WorldID = $COUNTY_WORLDID . '-' . $TRACT;
+            $Zone_Name = 'Tract ' . $TRACT . ' ' . $COUNTY_NAME;
             $CntyID = 'USA';
             $Cnty_Name = 'United States of America';
             $Adm1ID = mm_convert_usa_state_code( $STATE );
             $Adm1_Name = mm_convert_usa_state_name( $STATE );
-            $Adm2ID = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( $COUNTY, -1 );
-            $Adm2_Name = '';
+            $Adm2ID = $COUNTY_WORLDID;
+            $Adm2_Name = $COUNTY_NAME;
             $Adm3ID = ''; // added later
             $Adm3_Name = ''; // added later
             $Adm4ID = '';
-            $Adm4_Name = $NAME;
+            $Adm4_Name = '';
             $World = 'C';
             $Population = '';
             $Shape_Leng = '';
             $Region = 'North America Region';
             $Field = 'The Americas Field';
-            $geometry = ''; // added later
             $Notes = $file;
             $Last_Sync = date( 'Y-m-d H:i:s', time() );
             $Sync_Source = 'US Census KML';
             $Source_Key = $GEOID;
 
-            
-
-            /**
-             * Cascading duplicate check
-             * Issue: The creation of the WorldID key has duplicates challenges. So this is a cascading series of three renameings to find an alternate WorldID key.
-             * It tries to increment the final number of the WorldID first, then it searches for an alternate alpha character from the name two times, and then it fails and populates the $error variable.
-             */
-            $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE WorldID = '$WorldID'" ); // check if WorldID already exists
-            if ( !is_null( $duplicate_check ) ) { // if WorldID exists in the database
-                // check if previously installed
-                $duplicate_check = $wpdb->get_var( "SELECT Source_Key FROM $table WHERE Source_Key = '$GEOID' AND WorldID = '$WorldID'" ); // if WorldID already exists, check if this record is the same source_key (geoid)
-                if ( is_null( $duplicate_check ) ) { // if the worldid is taken in the previous if, but the worldid and geoid combination are not found, then we need to find a new worldid
-                    $last_digit = substr( $WorldID, -1 );
-                    $last_digit++;
-                    if ( $last_digit >= 10 ) {
-                        $last_digit = 1;
-                    }
-                    $WorldID = substr( $WorldID, 0, -1 ) . $last_digit;
-                    $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE WorldID = '$WorldID' " );
-                    if ( !is_null( $duplicate_check ) ) { // if WorldID exists in the database
-                        // check if previously installed
-                        $duplicate_check = $wpdb->get_var( "SELECT Source_Key FROM $table WHERE Source_Key = '$GEOID' AND WorldID = '$WorldID'" ); // if WorldID already exists, check if this record is the same source_key (geoid)
-                        if ( is_null( $duplicate_check ) ) { // if the worldid is taken in the previous if, but the worldid and geoid combination are not found, then we need to find a new worldid
-                            $WorldID = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( strtoupper( $NAME ), 4, 4 );
-                            $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE WorldID = '$WorldID' " );
-                            if ( !is_null( $duplicate_check ) ) { // if WorldID exists in the database
-                                // check if previously installed
-                                $duplicate_check = $wpdb->get_var( "SELECT Source_Key FROM $table WHERE Source_Key = '$GEOID' AND WorldID = '$WorldID'" ); // if WorldID already exists, check if this record is the same source_key (geoid)
-                                if ( is_null( $duplicate_check ) ) { // if the worldid is taken in the previous if, but the worldid and geoid combination are not found, then we need to find a new worldid
-                                    $WorldID = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( strtoupper( $NAME ), 5, 5 );
-                                    $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE WorldID = '$WorldID' " );
-                                    if ( !is_null( $duplicate_check ) ) {
-                                        $error = ' Duplicate with ' . mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( $COUNTY, -1 ) . ' | ';
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } // end if duplicate check
-
-
-            
 
             // Create SQL and insert statement
             $insert_sql = "
