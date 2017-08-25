@@ -46,8 +46,8 @@ class MM_Admin_Tab_Import
             if ( isset( $_POST[ 'states-dropdown' ] ) ) { // check if file is correctly set
                 $this->install_usa_tracts_kml( $_POST[ 'states-dropdown' ] );
             }
-            if ( isset( $_POST[ 'install_gdam_kml' ] ) ) { // check if file is correctly set
-                $this->install_gdam_kml( );
+            if ( isset( $_POST[ 'install_gdam_2' ] ) ) { // check if file is correctly set
+                $this->install_gdam_adm2_kml( );
             }
         }
         
@@ -67,7 +67,7 @@ class MM_Admin_Tab_Import
         $html .= '</tbody></table><br>';
     
         $html .= '<table class="widefat striped"><thead><th>GDAM Installer</th><th></th><th></th></thead><tbody>';
-        $html .= '<tr><th><form method="post"><button type="submit" class="button" name="install_gdam_kml" value="true" >Install GDAM UNIT</button></form></th><td>Add KML file, select admin level, submit</td><td></td></tr>';
+        $html .= '<tr><th><form method="post"><button type="submit" class="button" name="install_gdam_2" value="true" >Install GDAM Admin2</button></form></th><td>Add KML file, select admin level, submit</td><td></td></tr>';
         $html .= '</tbody></table>';
     
 //        $oz_record = json_decode( file_get_contents( "https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/query?outFields=*&returnGeometry=true&resultRecordCount=1&f=pgeojson&where=WorldID='TUN-TAT'" ), true);
@@ -1226,9 +1226,9 @@ class MM_Admin_Tab_Import
         }
     }
     
-    public function install_gdam_kml() {
+    public function install_gdam_adm2_kml() {
         // SET VARIABLES
-        $kml = 'TUN_adm1.kml';
+        $kml = 'TUN_Adm2.kml';
         global $wpdb;
         $table = $this->table;
         $ring = [];
@@ -1241,18 +1241,19 @@ class MM_Admin_Tab_Import
         foreach ($kml_object->Document->Placemark as $place) {
         
             $name = $place->name;
-            $name_code = mb_strtoupper( substr( str_replace( ' ', '', $name ), 0, 3 ) );
-        
+            
             
             // Create the record array
-            $WorldID = 'TUN-' . $name_code;
+            $WorldID = $place->ExtendedData->Data->value;
             $Zone_Name =  $name;
             $CntyID = 'TUN';
             $Cnty_Name = 'Tunisia';
-            $Adm1ID = $WorldID;
-            $Adm1_Name = $Zone_Name;
-            $Adm2ID = '';
-            $Adm2_Name = '';
+    
+            $Adm1ID = substr($WorldID, 0, 7);
+            $Adm1_Name = $wpdb->get_var( "SELECT Zone_Name FROM $table WHERE WorldID = '$Adm1ID'" );
+            
+            $Adm2ID = $WorldID;
+            $Adm2_Name = $Zone_Name;
             $Adm3ID = '';
             $Adm3_Name = '';
             $Adm4ID = '';
@@ -1271,106 +1272,112 @@ class MM_Admin_Tab_Import
             $Source_Key = '';
         
             // Parse and create JSON coordinate record.
-//            if ( $place->Polygon ) {
-//                $ring = [];
-//                $polygon = [];
-//                $values = explode( " ", $place->Polygon->outerBoundaryIs->LinearRing->coordinates );
-//                foreach ( $values as $value ) {
-//                    $coords = explode( ",", $value );
-//
-//                    $polygon[] = $coords;
-//
-//                }
-//                $ring[] = $polygon;
-//            }
-//            elseif ( $place->MultiGeometry ) {
-//                $ring = [];
-//                foreach ( $place->MultiGeometry->Polygon as $single_polygon ) {
-//                    $polygon = [];
-//                    $values = explode( " ", $single_polygon->outerBoundaryIs->LinearRing->coordinates );
-//                    foreach ( $values as $value ) {
-//                        $value = substr( $value, 0, -4 );
-//                        $coords = explode( ",", $value );
-//
-//                        $polygon[] = $coords;
-//
-//                    }
-//                    $ring[] = $polygon;
-//                }
-//            }
-//
-//            $geometry = json_encode( $ring, JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK );
-//
-//            $center = mm_find_center( $geometry );
-//            $Cen_x = $center[ 'Cen_x' ];
-//            $Cen_y = $center[ 'Cen_y' ];
-//
-//            // Create SQL and insert statement
-//            $insert_sql = "
-//            REPLACE INTO $table
-//            (
-//            WorldID,
-//            Zone_Name,
-//            CntyID,
-//            Cnty_Name,
-//            Adm1ID,
-//            Adm1_Name,
-//            Adm2ID,
-//            Adm2_Name,
-//            Adm3ID,
-//            Adm3_Name,
-//            Adm4ID,
-//            Adm4_Name,
-//            World,
-//            Population,
-//            Shape_Leng,
-//            Cen_x,
-//            Cen_y,
-//            Region,
-//            Field,
-//            geometry,
-//            Notes,
-//            Last_Sync,
-//            Sync_Source,
-//            Source_Key
-//            )
-//            VALUES
-//            (
-//            '$WorldID',
-//            '$Zone_Name',
-//            '$CntyID',
-//            '$Cnty_Name',
-//            '$Adm1ID',
-//            '$Adm1_Name',
-//            '$Adm2ID',
-//            '$Adm2_Name',
-//            '$Adm3ID',
-//            '$Adm3_Name',
-//            '$Adm4ID',
-//            '$Adm4_Name',
-//            '$World',
-//            '$Population',
-//            '$Shape_Leng',
-//            '$Cen_x',
-//            '$Cen_y',
-//            '$Region',
-//            '$Field',
-//            '$geometry',
-//            '$Notes',
-//            '$Last_Sync',
-//            '$Sync_Source',
-//            '$Source_Key'
-//            )
-//            ";
+            if ( $place->Polygon ) {
+                $ring = [];
+                $polygon = [];
+                $values = explode( ",0", $place->Polygon->outerBoundaryIs->LinearRing->coordinates );
+                
+                $count = count($values);
+                unset($values[$count - 1]); // remove last empty element. the explode generates an empty array element at the end.
+                
+                foreach ( $values as $value ) {
+                    $value = trim( $value );
+                    $coords = explode( ",", $value );
+                    !empty($coords) ? $polygon[] = $coords : false;
+
+                }
+                $ring[] = $polygon;
+            }
+            elseif ( $place->MultiGeometry ) {
+                $ring = [];
+                foreach ( $place->MultiGeometry->Polygon as $single_polygon ) {
+                    $polygon = [];
+                    $values = explode( ",0", $single_polygon->outerBoundaryIs->LinearRing->coordinates );
+    
+                    $count = count($values);
+                    unset($values[$count - 1]); // remove last empty element. the explode generates an empty array element at the end.
+                    
+                    foreach ( $values as $value ) {
+                        $value = trim( $value );
+                        $coords = explode( ",", $value );
+                        !empty($coords) ? $polygon[] = $coords : false;
+
+                    }
+                    $ring[] = $polygon;
+                }
+            }
+
+            $geometry = json_encode( $ring, JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK );
+
+            $center = mm_find_center( $geometry );
+            $Cen_x = $center[ 'Cen_x' ];
+            $Cen_y = $center[ 'Cen_y' ];
+
+            // Create SQL and insert statement
+            $insert_sql = "
+            REPLACE INTO $table
+            (
+            WorldID,
+            Zone_Name,
+            CntyID,
+            Cnty_Name,
+            Adm1ID,
+            Adm1_Name,
+            Adm2ID,
+            Adm2_Name,
+            Adm3ID,
+            Adm3_Name,
+            Adm4ID,
+            Adm4_Name,
+            World,
+            Population,
+            Shape_Leng,
+            Cen_x,
+            Cen_y,
+            Region,
+            Field,
+            geometry,
+            Notes,
+            Last_Sync,
+            Sync_Source,
+            Source_Key
+            )
+            VALUES
+            (
+            '$WorldID',
+            '$Zone_Name',
+            '$CntyID',
+            '$Cnty_Name',
+            '$Adm1ID',
+            '$Adm1_Name',
+            '$Adm2ID',
+            '$Adm2_Name',
+            '$Adm3ID',
+            '$Adm3_Name',
+            '$Adm4ID',
+            '$Adm4_Name',
+            '$World',
+            '$Population',
+            '$Shape_Leng',
+            '$Cen_x',
+            '$Cen_y',
+            '$Region',
+            '$Field',
+            '$geometry',
+            '$Notes',
+            '$Last_Sync',
+            '$Sync_Source',
+            '$Source_Key'
+            )
+            ";
         
-//            $wpdb->query( $insert_sql );
-            print '<pre>';
-            print $WorldID . ' ';
-            print $Zone_Name ;
-            print '</pre>';
+            $wpdb->query( $insert_sql );
+//            print '<pre>';
+//            print_r($insert_sql);
+//            print '</pre>';
         }
         
-//        print_r( $wpdb->rows_affected . $wpdb->last_error );
-//        print $error;
+        print_r( $wpdb->rows_affected );
+        print $error;
     }
 }
