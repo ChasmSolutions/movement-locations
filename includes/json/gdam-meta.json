@@ -1,0 +1,14 @@
+{
+  "base_url": "https://s3.amazonaws.com/disciple-tools-locations/",
+  "countries": {
+    "TUN": {
+      "key": "TUN",
+      "ab": "TUN",
+      "name": "Tunisia",
+      "levels": "3",
+      "admin0_file": "TUN_adm0.kml",
+      "admin1_file": "TUN_adm1.kml",
+      "admin2_file": "TUN_adm2.kml"
+    }
+  }
+}

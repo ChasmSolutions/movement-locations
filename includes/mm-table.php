@@ -44,10 +44,9 @@ class MM_Table extends WP_List_Table {
             case 'Center':
                 return !empty( $item['Cen_x'] ) ? '<a href="https://www.google.com/maps/@'.$item['Cen_y'].','.$item['Cen_x'].',10z" target="_blank">' . $item['Cen_x'] . ', ' . $item['Cen_y'] . '</a>' : '';
             case 'geometry':
-                return !empty( $item[$column_name] ) ? 'Yes' : 'No';
-            case 'OBJECTID_1':
-            case 'OBJECTID':
-                return !empty( $item[$column_name] ) ? $item[$column_name] . ' (<a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/query?outFields=*&returnGeometry=true&resultRecordCount=1&f=html&where=WorldID=\''.$item['WorldID'].'\'">html</a>, <a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/query?outFields=*&returnGeometry=true&resultRecordCount=1&f=pgeojson&where=WorldID=\''.$item['WorldID'].'\'">json</a>)' : '';
+                return empty( $item[$column_name] ) ? 'No' : 'Yes';
+            case 'Source_Key':
+                return !empty( $item[$column_name] ) && ($item['Sync_Source'] == '4KArcGIS') ? $item[$column_name] . ' (<a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/query?outFields=*&returnGeometry=true&resultRecordCount=1&f=html&where=WorldID=\''.$item['WorldID'].'\'">html</a>, <a href="https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/query?outFields=*&returnGeometry=true&resultRecordCount=1&f=pgeojson&where=WorldID=\''.$item['WorldID'].'\'">json</a>)' : $item[$column_name];
             case 'Population':
                 return !empty( $item[$column_name] ) ? number_format_i18n( $item[$column_name] ) : '';
             default:
@@ -100,15 +99,13 @@ class MM_Table extends WP_List_Table {
 //            'World'         => 'World',
             'Population'    => 'Population',
             'Center'         => 'Center',
-//            'Cen_y'         => 'Cen_y',
             'Region'        => 'Region',
             'Field'         => 'Field',
             'geometry'      => 'geometry',
-            'OBJECTID_1'    => 'OBJECTID_1',
-//            'OBJECTID'      => 'OBJECTID',
 //            'Notes'         => 'Notes',
             'Last_Sync'         => 'Last_Sync',
             'Sync_Source'         => 'Sync_Source',
+            'Source_Key'         => 'Source_Key',
         );
         return $columns;
     }
@@ -122,10 +119,10 @@ class MM_Table extends WP_List_Table {
             'CntyID'  => array('CntyID',false),
             'Cnty_Name'  => array('Cnty_Name',false),
             'geometry'  => array('geometry',false),
-            'OBJECTID_1'  => array('OBJECTID_1',false),
             'Region'  => array('Region',false),
             'Field'  => array('Field',false),
-            'last_sync'  => array('last_sync',false),
+            'Last_Sync'  => array('last_sync',false),
+            'Source_Key'  => array('Source_Key',false),
         );
         return $sortable_columns;
     }
