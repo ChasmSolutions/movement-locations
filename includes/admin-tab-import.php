@@ -1249,7 +1249,7 @@ class MM_Admin_Tab_Import
             $CntyID = 'TUN';
             $Cnty_Name = 'Tunisia';
     
-            $Adm1ID = substr($WorldID, 0, 7);
+            $Adm1ID = substr( $WorldID, 0, 7 );
             $Adm1_Name = $wpdb->get_var( "SELECT Zone_Name FROM $table WHERE WorldID = '$Adm1ID'" );
             
             $Adm2ID = $WorldID;
@@ -1277,13 +1277,13 @@ class MM_Admin_Tab_Import
                 $polygon = [];
                 $values = explode( ",0", $place->Polygon->outerBoundaryIs->LinearRing->coordinates );
                 
-                $count = count($values);
-                unset($values[$count - 1]); // remove last empty element. the explode generates an empty array element at the end.
+                $count = count( $values );
+                unset( $values[$count - 1] ); // remove last empty element. the explode generates an empty array element at the end.
                 
                 foreach ( $values as $value ) {
                     $value = trim( $value );
                     $coords = explode( ",", $value );
-                    !empty($coords) ? $polygon[] = $coords : false;
+                    !empty( $coords ) ? $polygon[] = $coords : false;
 
                 }
                 $ring[] = $polygon;
@@ -1294,13 +1294,13 @@ class MM_Admin_Tab_Import
                     $polygon = [];
                     $values = explode( ",0", $single_polygon->outerBoundaryIs->LinearRing->coordinates );
     
-                    $count = count($values);
-                    unset($values[$count - 1]); // remove last empty element. the explode generates an empty array element at the end.
+                    $count = count( $values );
+                    unset( $values[$count - 1] ); // remove last empty element. the explode generates an empty array element at the end.
                     
                     foreach ( $values as $value ) {
                         $value = trim( $value );
                         $coords = explode( ",", $value );
-                        !empty($coords) ? $polygon[] = $coords : false;
+                        !empty( $coords ) ? $polygon[] = $coords : false;
 
                     }
                     $ring[] = $polygon;
