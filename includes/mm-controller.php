@@ -113,7 +113,6 @@ class MM_Controller {
         $count['admin4'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE CntyID = '$cnty_id' AND WorldID LIKE '___-___-___-___-___'" );
         
         return [
-            "cnty_id" => $cnty_id,
             "adm1_count" => $count['admin1'],
             "adm2_count" => $count['admin2'],
             "adm3_count" => $count['admin3'],
