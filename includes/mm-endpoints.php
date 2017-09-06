@@ -67,6 +67,15 @@ class MM_Endpoints {
                 ],
             ]
         );
+    
+        register_rest_route(
+            $namespace, '/' . $base . '/get_summary', [
+                [
+                    'methods'         => WP_REST_Server::READABLE,
+                    'callback'        => [ $this, 'get_summary' ],
+                ],
+            ]
+        );
     }
 
     /**
@@ -85,6 +94,26 @@ class MM_Endpoints {
             $result = MM_Controller::get_country_by_level( $params['CntyID'], $params['level'] );
             if ($result["status"] == 'OK'){
                 return $result["geojson"];
+            } else {
+                return new WP_Error( "country_error", $result["message"], ['status' => 400] );
+            }
+        } else {
+            return new WP_Error( "country_param_error", "Please provide a valid country (WorldID)", ['status' => 400] );
+        }
+    }
+    
+    /**
+     * Gets a summary of the country. i.e. how many adm1, how many adm2, etc
+     * @param WP_REST_Request $request
+     *
+     * @return array|WP_Error
+     */
+    public function get_summary ( WP_REST_Request $request ){
+        $params = $request->get_params();
+        if (isset( $params['cnty_id'] )){
+            $result = MM_Controller::get_summary( $params['cnty_id'] );
+            if ($result){
+                return $result;
             } else {
                 return new WP_Error( "country_error", $result["message"], ['status' => 400] );
             }
