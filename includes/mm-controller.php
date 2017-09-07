@@ -76,16 +76,16 @@ class MM_Controller {
                         'Adm4ID' => $record['Adm4ID'],
                         'Adm4_Name' => $record['Adm4_Name'],
                         'World' => $record['World'],
-                        'Population' => $record['Population'],
-                        'Shape_Leng' => $record['Shape_Leng'],
-                        'Cen_x' => $record['Cen_x'],
-                        'Cen_y' => $record['Cen_y'],
+                        'Population' => (int) $record['Population'],
+                        'Shape_Leng' => (float) $record['Shape_Leng'],
+                        'Cen_x' => (float) $record['Cen_x'],
+                        'Cen_y' => (float) $record['Cen_y'],
                         'Region' => $record['Region'],
                         'Field' => $record['Field'],
-                        'OBJECTID_1' => $record['OBJECTID_1'],
                         'Notes' => $record['Notes'],
                         'Last_Sync' => $record['Last_Sync'],
-                        'Sync_Source' => $record['Sync_Source']
+                        'Sync_Source' => $record['Sync_Source'],
+                        'Source_Key' => $record['Source_Key'],
                     ]
                 ];
         }
