@@ -62,7 +62,7 @@ class MM_Endpoints {
         register_rest_route(
             $namespace, '/' . $base . '/getcountrybylevel', [
                 [
-                    'methods'         => WP_REST_Server::CREATABLE,
+                    'methods'         => WP_REST_Server::READABLE,
                     'callback'        => [ $this, 'get_country_by_level' ],
                 ],
             ]
@@ -90,8 +90,8 @@ class MM_Endpoints {
      */
     public function get_country_by_level ( WP_REST_Request $request ){
         $params = $request->get_params();
-        if (isset( $params['CntyID'] )){
-            $result = MM_Controller::get_country_by_level( $params['CntyID'], $params['level'] );
+        if (isset( $params['cnty_id'] )){
+            $result = MM_Controller::get_country_by_level( $params['cnty_id'], $params['level'] );
             if ($result["status"] == 'OK'){
                 return $result["geojson"];
             } else {

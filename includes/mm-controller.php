@@ -19,31 +19,31 @@ class MM_Controller {
      * @param  $address
      * @return array
      */
-    public static function get_country_by_level ( $CntyID, $level ) {
+    public static function get_country_by_level ( $cnty_id, $level ) {
         global $wpdb;
         $where = '';
         
         switch ($level) {
             case '0':
-                $where = "WHERE `WorldID` LIKE '___' AND `CntyID` = '$CntyID'";
+                $where = "WHERE `WorldID` LIKE '___' AND `CntyID` = '$cnty_id'";
                 break;
             case '1':
-                $where = "WHERE `WorldID` LIKE '___-___' AND `CntyID` = '$CntyID'";
+                $where = "WHERE `WorldID` LIKE '___-___' AND `CntyID` = '$cnty_id'";
                 break;
             case '2':
-                $where = "WHERE `WorldID` LIKE '___-___-___' AND `CntyID` = '$CntyID'";
+                $where = "WHERE `WorldID` LIKE '___-___-___' AND `CntyID` = '$cnty_id'";
                 break;
             case '3':
-                $where = "WHERE `WorldID` LIKE '___-___-___-___' AND `CntyID` = '$CntyID'";
+                $where = "WHERE `WorldID` LIKE '___-___-___-___' AND `CntyID` = '$cnty_id'";
                 break;
             case '4':
-                $where = "WHERE `WorldID` LIKE '___-___-___-___-___' AND `CntyID` = '$CntyID'";
+                $where = "WHERE `WorldID` LIKE '___-___-___-___-___' AND `CntyID` = '$cnty_id'";
                 break;
             default:
                 break;
         }
         
-        // query $CntyID and filter for admin1
+        // query $cnty_id and filter for admin1
         $data = $wpdb->get_results( "SELECT * FROM $wpdb->mm $where", ARRAY_A );
     
         $geojson = [
@@ -85,7 +85,7 @@ class MM_Controller {
                         'Notes' => $record['Notes'],
                         'Last_Sync' => $record['Last_Sync'],
                         'Sync_Source' => $record['Sync_Source'],
-                        'Source_Key' => $record['Source_Key'],
+                        'Source_Key' => $record['Source_Key']
                     ]
                 ];
         }
