@@ -141,8 +141,8 @@ class MM_Endpoints {
         $params = $request->get_params();
         if (isset( $params['state_id'] )){
             $result = MM_Controller::get_usa_state( $params['state_id'], $params['level'] );
-            if ($result){
-                return $result;
+            if ($result["status"] == 'OK'){
+                return $result["geojson"];
             } else {
                 return new WP_Error( "country_error", $result["message"], ['status' => 400] );
             }
