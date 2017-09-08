@@ -76,6 +76,15 @@ class MM_Endpoints {
                 ],
             ]
         );
+        
+        register_rest_route(
+            $namespace, '/' . $base . '/getstate', [
+                [
+                    'methods'         => WP_REST_Server::READABLE,
+                    'callback'        => [ $this, 'get_usa_state' ],
+                ],
+            ]
+        );
     }
 
     /**
@@ -112,6 +121,26 @@ class MM_Endpoints {
         $params = $request->get_params();
         if (isset( $params['cnty_id'] )){
             $result = MM_Controller::get_summary( $params['cnty_id'] );
+            if ($result){
+                return $result;
+            } else {
+                return new WP_Error( "country_error", $result["message"], ['status' => 400] );
+            }
+        } else {
+            return new WP_Error( "country_param_error", "Please provide a valid country (WorldID)", ['status' => 400] );
+        }
+    }
+    
+    /**
+     * Gets counties and tracts for USA states
+     * @param WP_REST_Request $request
+     *
+     * @return array|WP_Error
+     */
+    public function get_usa_state ( WP_REST_Request $request ){
+        $params = $request->get_params();
+        if (isset( $params['state_id'] )){
+            $result = MM_Controller::get_usa_state( $params['state_id'], $params['level'] );
             if ($result){
                 return $result;
             } else {
