@@ -139,6 +139,9 @@ class MM_Controller {
             case 'tract':
                 $where = "WHERE `WorldID` LIKE '$state_id-___-%' AND `CntyID` = '$cnty_id'";
                 break;
+            case 'state':
+                $where = "WHERE `WorldID` = '$state_id'";
+                break;
             default:
                 break;
         }
