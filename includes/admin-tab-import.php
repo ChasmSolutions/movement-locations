@@ -343,13 +343,13 @@ class MM_Admin_Tab_Import
                 
                 // Create the record array
                 $WorldID = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( $COUNTY, -1 );
-                $Zone_Name = esc_attr($NAME);
+                $Zone_Name = esc_attr( $NAME );
                 $CntyID = 'USA';
                 $Cnty_Name = 'United States of America';
                 $Adm1ID = mm_convert_usa_state_code( $STATE );
-                $Adm1_Name = esc_attr(mm_convert_usa_state_name( $STATE ));
+                $Adm1_Name = esc_attr( mm_convert_usa_state_name( $STATE ) );
                 $Adm2ID = '';
-                $Adm2_Name = esc_attr($NAME);
+                $Adm2_Name = esc_attr( $NAME );
                 $Adm3ID = '';
                 $Adm3_Name = '';
                 $Adm4ID = '';
@@ -359,12 +359,12 @@ class MM_Admin_Tab_Import
                 $Shape_Leng = '';
                 $Cen_x = ''; // added later
                 $Cen_y = ''; // added later
-                $Region = esc_attr('North America Region');
-                $Field = esc_attr('The Americas Field');
+                $Region = esc_attr( 'North America Region' );
+                $Field = esc_attr( 'The Americas Field' );
                 $geometry = ''; // added later
                 $Notes = $kml;
                 $Last_Sync = date( 'Y-m-d H:i:s', time() );
-                $Sync_Source = esc_attr('US Census KML');
+                $Sync_Source = esc_attr( 'US Census KML' );
                 $Source_Key = $GEOID;
                 
                 /**
@@ -584,13 +584,13 @@ class MM_Admin_Tab_Import
 
             // Create the record array
             $WorldID = $COUNTY_WORLDID[0]['WorldID'] . "-" . $i;
-            $Zone_Name = esc_attr("Tract " . $TRACT . " of " . $COUNTY_WORLDID[0]['Zone_Name'] . ' County');
+            $Zone_Name = esc_attr( "Tract " . $TRACT . " of " . $COUNTY_WORLDID[0]['Zone_Name'] . ' County' );
             $CntyID = 'USA';
             $Cnty_Name = 'United States of America';
             $Adm1ID = mm_convert_usa_state_code( $STATE );
-            $Adm1_Name = esc_attr(mm_convert_usa_state_name( $STATE ));
+            $Adm1_Name = esc_attr( mm_convert_usa_state_name( $STATE ) );
             $Adm2ID = $COUNTY_WORLDID[0]['WorldID'];
-            $Adm2_Name = esc_attr($COUNTY_WORLDID[0]['Zone_Name']);
+            $Adm2_Name = esc_attr( $COUNTY_WORLDID[0]['Zone_Name'] );
             $Adm3ID = ''; // added later
             $Adm3_Name = ''; // added later
             $Adm4ID = '';
@@ -598,11 +598,11 @@ class MM_Admin_Tab_Import
             $World = 'C';
             $Population = '';
             $Shape_Leng = '';
-            $Region = esc_attr('North America Region');
-            $Field = esc_attr('The Americas Field');
+            $Region = esc_attr( 'North America Region' );
+            $Field = esc_attr( 'The Americas Field' );
             $Notes = $file;
             $Last_Sync = date( 'Y-m-d H:i:s', time() );
-            $Sync_Source = esc_attr('US Census KML');
+            $Sync_Source = esc_attr( 'US Census KML' );
             $Source_Key = $GEOID;
 
 
