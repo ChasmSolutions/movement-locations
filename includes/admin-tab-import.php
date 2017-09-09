@@ -527,16 +527,12 @@ class MM_Admin_Tab_Import
     
         $kml_object = simplexml_load_file( $directory->base_url . $file ); // get xml from amazon
         
-        $i = 100;
+        $i = 'A01';
         
         
         // PARSE AND INSERT SOURCE
         foreach ($kml_object->Document->Folder->Placemark as $place) {
     
-            if ($i === 999) {
-                $i = 100;
-            }
-            
             // Parse KML
             $STATE = $place->ExtendedData->SchemaData->SimpleData[ 0 ];
             $COUNTY = $place->ExtendedData->SchemaData->SimpleData[ 1 ];
