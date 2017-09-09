@@ -77,7 +77,7 @@ class MM_Activate {
         
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         
-        /* Activity Log */
+        /* Movement Mapping */
         $table_name = $wpdb->prefix . 'mm';
         if( $wpdb->get_var( "show tables like '{$table_name}'" ) != $table_name ) {
             $sql1 = "CREATE TABLE IF NOT EXISTS `{$table_name}` (
@@ -107,14 +107,48 @@ class MM_Activate {
                       `Source_Key` varchar(25) CHARACTER SET utf8mb4 DEFAULT NULL,
                       PRIMARY KEY (`WorldID`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;";
-            
+    
             dbDelta( $sql1 );
-            
+    
             update_option( 'mm_db_version', $version );
         }
+    
+            /* Movement Mapping USA */
+            $table_name = $wpdb->prefix . 'mm_usa';
+        if( $wpdb->get_var( "show tables like '{$table_name}'" ) != $table_name ) {
+            $sql2 = "CREATE TABLE IF NOT EXISTS `{$table_name}` (
+					  `WorldID` varchar(50) CHARACTER SET utf8mb4 NOT NULL,
+                      `Zone_Name` varchar(50) CHARACTER SET utf8mb4 NOT NULL,
+                      `CntyID` varchar(3) CHARACTER SET utf8mb4 NOT NULL,
+                      `Cnty_Name` varchar(50) CHARACTER SET utf8mb4 NOT NULL,
+                      `Adm1ID` varchar(7) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm1_Name` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm2ID` varchar(11) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm2_Name` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm3ID` varchar(15) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm3_Name` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm4ID` varchar(19) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Adm4_Name` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `World` varchar(1) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Population` float DEFAULT NULL,
+                      `Shape_Leng` float DEFAULT NULL,
+                      `Cen_x` float DEFAULT NULL,
+                      `Cen_y` float DEFAULT NULL,
+                      `Region` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Field` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `geometry` longtext CHARACTER SET utf8mb4,
+                      `Notes` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Last_Sync` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                      `Sync_Source` varchar(25) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      `Source_Key` varchar(25) CHARACTER SET utf8mb4 DEFAULT NULL,
+                      PRIMARY KEY (`WorldID`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;";
         
+            dbDelta( $sql2 );
         
-        
+            update_option( 'mm_usa_db_version', $version );
+                
+        }
     }
     
 }

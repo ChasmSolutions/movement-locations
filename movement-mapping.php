@@ -108,6 +108,7 @@ class Movement_Mapping {
         $this->setup_actions();
     
         $wpdb->mm = $wpdb->prefix . 'mm';
+        $wpdb->mm_usa = $wpdb->prefix . 'mm_usa';
     
         // Main plugin directory path and URI.
         $this->dir_path     = trailingslashit( plugin_dir_path( __FILE__ ) );

@@ -21,7 +21,7 @@ class MM_Admin_Tab_Import
      * @since   0.1
      */
     public function __construct () {
-        $this->table = 'wp_mm';
+        $this->table = 'wp_mm_usa';
         
     } // End __construct()
     
@@ -98,7 +98,7 @@ class MM_Admin_Tab_Import
         global $wpdb;
         $table = $this->table;
         $Last_Sync = date( 'Y-m-d H:i:s', time() );
-                
+        
         // Create SQL and insert statement
         $insert_sql = "
         REPLACE INTO $table
@@ -527,9 +527,16 @@ class MM_Admin_Tab_Import
     
         $kml_object = simplexml_load_file( $directory->base_url . $file ); // get xml from amazon
         
+        $i = 100;
+        
+        
         // PARSE AND INSERT SOURCE
         foreach ($kml_object->Document->Folder->Placemark as $place) {
     
+            if ($i === 999) {
+                $i = 100;
+            }
+            
             // Parse KML
             $STATE = $place->ExtendedData->SchemaData->SimpleData[ 0 ];
             $COUNTY = $place->ExtendedData->SchemaData->SimpleData[ 1 ];
@@ -580,8 +587,8 @@ class MM_Admin_Tab_Import
             
 
             // Create the record array
-            $WorldID = $COUNTY_WORLDID[0]['WorldID'] . "-" . $TRACT;
-            $Zone_Name = "Tract " . $TRACT . " " . $COUNTY_WORLDID[0]['Zone_Name'];
+            $WorldID = $COUNTY_WORLDID[0]['WorldID'] . "-" . $i;
+            $Zone_Name = "Tract " . $TRACT . " of " . $COUNTY_WORLDID[0]['Zone_Name'] . ' County';
             $CntyID = 'USA';
             $Cnty_Name = 'United States of America';
             $Adm1ID = mm_convert_usa_state_code( $STATE );
@@ -662,9 +669,11 @@ class MM_Admin_Tab_Import
             ";
 
             $wpdb->query( $insert_sql );
+            
+            $i++;
 
         } // end if state
-            
+        
         
         print_r( $wpdb->rows_affected . $wpdb->last_error );
         print $error;
@@ -1230,7 +1239,7 @@ class MM_Admin_Tab_Import
         // SET VARIABLES
         $kml = 'TUN_Adm2.kml';
         global $wpdb;
-        $table = $this->table;
+        $table = $wpdb->mm;
         $ring = [];
         $error = '';
     
