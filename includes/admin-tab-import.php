@@ -593,8 +593,8 @@ class MM_Admin_Tab_Import
             $Cnty_Name = 'United States of America';
             $Adm1ID = mm_convert_usa_state_code( $STATE );
             $Adm1_Name = mm_convert_usa_state_name( $STATE );
-            $Adm2ID = $WorldID;
-            $Adm2_Name = $Zone_Name;
+            $Adm2ID = $COUNTY_WORLDID[0]['WorldID'];
+            $Adm2_Name = $COUNTY_WORLDID[0]['Zone_Name'];
             $Adm3ID = ''; // added later
             $Adm3_Name = ''; // added later
             $Adm4ID = '';

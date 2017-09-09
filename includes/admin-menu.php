@@ -89,9 +89,9 @@ class MM_Admin_Menu {
         if ($tab == 'stats' ) {$html .= 'nav-tab-active';}
         $html .= '">Stats</a>';
 
-        $html .= $tab_link_pre . 'settings' . $tab_link_post;
-        if ($tab == 'settings' || !isset( $tab )) {$html .= 'nav-tab-active';}
-        $html .= '">Settings</a>';
+//        $html .= $tab_link_pre . 'settings' . $tab_link_post;
+//        if ($tab == 'settings' || !isset( $tab )) {$html .= 'nav-tab-active';}
+//        $html .= '">Settings</a>';
 
         $html .= $tab_link_pre . 'import' . $tab_link_post;
         if ($tab == 'import' ) {$html .= 'nav-tab-active';}
