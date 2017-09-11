@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly.
  * Get the country database statistics
  * @return array
  */
-function ml_get_country_stats () {
+function mm_get_country_stats () {
     global $wpdb;
     
     $count['total_rows'] = $wpdb->get_var( "SELECT count(*) as count FROM $wpdb->mm;" );
@@ -30,6 +30,31 @@ function ml_get_country_stats () {
         'Total Admin 2' => number_format( $count['total_admin2'] ),
         'Total Admin 3' => number_format( $count['total_admin3'] ),
         'Total Admin 4' => number_format( $count['total_admin4'] ),
+    );
+    
+    return $stats;
+}
+
+/**
+ * Get the usa database statistics
+ * @return array
+ */
+function mm_get_usa_stats () {
+    global $wpdb;
+    $table = $wpdb->mm_usa;
+    
+    $count['total_rows'] = $wpdb->get_var( "SELECT count(*) as count FROM $wpdb->mm_usa;" );
+    $count['total_admin0'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm_usa WHERE WorldID LIKE '___';" );
+    $count['total_admin1'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm_usa WHERE WorldID LIKE '___-___';" );
+    $count['total_admin2'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm_usa WHERE WorldID LIKE '___-___-___';" );
+    $count['total_admin3'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm_usa WHERE WorldID LIKE '___-___-___-___';" );
+    
+    $stats = array(
+        'Total Rows' => number_format( $count['total_rows'] ),
+        'Total Countries' => number_format( $count['total_admin0'] ),
+        'Total States' => number_format( $count['total_admin1'] ),
+        'Total Counties' => number_format( $count['total_admin2'] ),
+        'Total Tracts' => number_format( $count['total_admin3'] ),
     );
     
     return $stats;

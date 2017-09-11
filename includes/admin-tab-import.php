@@ -47,13 +47,13 @@ class MM_Admin_Tab_Import
                 $this->install_usa_tracts_kml( $_POST[ 'states-dropdown' ] );
             }
             if ( isset( $_POST[ 'install_gdam_2' ] ) ) { // check if file is correctly set
-                $this->install_gdam_adm2_kml( );
+                $this->install_gdam_adm2_kml( $_POST['field_name'] );
             }
         }
         
         // Build HTML for Page
         $html = '';
-        $html .= '<div class="wrap"><h2>Import</h2>'; // Block title
+        $html .= '<div class="wrap"><h2>Converters</h2>'; // Block title
         $html .= '<div class="wrap"><div id="poststuff"><div id="post-body" class="metabox-holder columns-2">';
         $html .= '<div id="post-body-content">';
         $html .= '<table class="widefat striped"><thead><th>USA Installers</th><th></th><th></th></thead><tbody>';
@@ -67,7 +67,7 @@ class MM_Admin_Tab_Import
         $html .= '</tbody></table><br>';
     
         $html .= '<table class="widefat striped"><thead><th>GDAM Installer</th><th></th><th></th></thead><tbody>';
-        $html .= '<tr><th><form method="post"><button type="submit" class="button" name="install_gdam_2" value="true" >Install GDAM Admin2</button></form></th><td>Add KML file, select admin level, submit</td><td></td></tr>';
+        $html .= '<tr><th><form method="post"><input type="text" name="file_name"/> <button type="submit" class="button" name="install_gdam_2" value="true" >Install GDAM Admin2 KML</button></form></th><td>Add KML file, select admin level, submit</td><td></td></tr>';
         $html .= '</tbody></table>';
     
 //        $oz_record = json_decode( file_get_contents( "https://services1.arcgis.com/DnZ5orhsUGGdUZ3h/ArcGIS/rest/services/OmegaZones082016/FeatureServer/0/query?outFields=*&returnGeometry=true&resultRecordCount=1&f=pgeojson&where=WorldID='TUN-TAT'" ), true);
@@ -81,6 +81,12 @@ class MM_Admin_Tab_Import
         
         
         $html .= '</div><!-- end post-body-content --><div id="postbox-container-1" class="postbox-container">';
+    
+        /* BOX */
+        $html .= '<table class="widefat striped"><thead><th>Notes</th></thead><tbody><tr><td>';
+        $html .= '<p>These conversion tools are primarily for building the initial databases. The US installers convert the .kml files provided by the US Census site, and convert them into the format of the 4K Mapping Group.</p>';
+        $html .= '</td></tr></tbody></table><br>';
+        
         $html .= '</div><!-- postbox-container 1 --><div id="postbox-container-2" class="postbox-container">';
         $html .= '';/* Add content to column */
         $html .= '</div><!-- postbox-container 2 --></div><!-- post-body meta box container --></div><!--poststuff end --></div><!-- wrap end -->';
@@ -339,114 +345,114 @@ class MM_Admin_Tab_Import
             $NAME   = $place->ExtendedData->SchemaData->SimpleData[ 5 ];
             $GEOID  = $place->ExtendedData->SchemaData->SimpleData[ 4 ];
             
-            if ($STATE == '24') { // TODO remove. Used for single state install
+//            if ($STATE == '24') { // TODO remove. Used for single state install
                 
-                if ( mm_convert_usa_state_code( $STATE ) ) { // tests if it is valid US state and not subterritory
+            if ( mm_convert_usa_state_code( $STATE ) ) { // tests if it is valid US state and not subterritory
         
-                    // Create the record array
-                    $WorldID     = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( $COUNTY, - 1 );
-                    $Zone_Name   = esc_attr( $NAME );
-                    $CntyID      = 'USA';
-                    $Cnty_Name   = 'United States of America';
-                    $Adm1ID      = mm_convert_usa_state_code( $STATE );
-                    $Adm1_Name   = esc_attr( mm_convert_usa_state_name( $STATE ) );
-                    $Adm2ID      = '';
-                    $Adm2_Name   = esc_attr( $NAME );
-                    $Adm3ID      = '';
-                    $Adm3_Name   = '';
-                    $Adm4ID      = '';
-                    $Adm4_Name   = '';
-                    $World       = 'C';
-                    $Population  = '';
-                    $Shape_Leng  = '';
-                    $Cen_x       = ''; // added later
-                    $Cen_y       = ''; // added later
-                    $Region      = 'North America Region' ;
-                    $Field       = 'The Americas Field' ;
-                    $geometry    = ''; // added later
-                    $Notes       = $kml;
-                    $Last_Sync   = date( 'Y-m-d H:i:s', time() );
-                    $Sync_Source = 'US Census KML' ;
-                    $Source_Key  = $GEOID;
+                // Create the record array
+                $WorldID     = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( $COUNTY, - 1 );
+                $Zone_Name   = esc_attr( $NAME );
+                $CntyID      = 'USA';
+                $Cnty_Name   = 'United States of America';
+                $Adm1ID      = mm_convert_usa_state_code( $STATE );
+                $Adm1_Name   = esc_attr( mm_convert_usa_state_name( $STATE ) );
+                $Adm2ID      = '';
+                $Adm2_Name   = esc_attr( $NAME );
+                $Adm3ID      = '';
+                $Adm3_Name   = '';
+                $Adm4ID      = '';
+                $Adm4_Name   = '';
+                $World       = 'C';
+                $Population  = '';
+                $Shape_Leng  = '';
+                $Cen_x       = ''; // added later
+                $Cen_y       = ''; // added later
+                $Region      = 'North America Region' ;
+                $Field       = 'The Americas Field' ;
+                $geometry    = ''; // added later
+                $Notes       = $kml;
+                $Last_Sync   = date( 'Y-m-d H:i:s', time() );
+                $Sync_Source = 'US Census KML' ;
+                $Source_Key  = $GEOID;
         
-                    /**
+                /**
                      * Cascading duplicate check
                      * Issue: The creation of the WorldID key has duplicates challenges. So this is a cascading series of three renameings to find an alternate WorldID key.
                      * It tries to increment the final number of the WorldID first, then it searches for an alternate alpha character from the name two times, and then it fails and populates the $error variable.
                      */
-                    $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE WorldID = '$WorldID'" ); // check if WorldID already exists
-                    if ( ! is_null( $duplicate_check ) ) { // if WorldID exists in the database
-                        // check if previously installed
-                        $duplicate_check = $wpdb->get_var( "SELECT Source_Key FROM $table WHERE Source_Key = '$GEOID' AND WorldID = '$WorldID'" ); // if WorldID already exists, check if this record is the same source_key (geoid)
-                        if ( is_null( $duplicate_check ) ) { // if the worldid is taken in the previous if, but the worldid and geoid combination are not found, then we need to find a new worldid
-                            $last_digit = substr( $WorldID, - 1 );
-                            $last_digit ++;
-                            if ( $last_digit >= 10 ) {
-                                $last_digit = 1;
-                            }
-                            $WorldID         = substr( $WorldID, 0, - 1 ) . $last_digit;
-                            $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE WorldID = '$WorldID' " );
-                            if ( ! is_null( $duplicate_check ) ) { // if WorldID exists in the database
-                                // check if previously installed
-                                $duplicate_check = $wpdb->get_var( "SELECT Source_Key FROM $table WHERE Source_Key = '$GEOID' AND WorldID = '$WorldID'" ); // if WorldID already exists, check if this record is the same source_key (geoid)
-                                if ( is_null( $duplicate_check ) ) { // if the worldid is taken in the previous if, but the worldid and geoid combination are not found, then we need to find a new worldid
-                                    $WorldID         = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( strtoupper( $NAME ), 3, 1 );
-                                    $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE WorldID = '$WorldID' " );
-                                    if ( ! is_null( $duplicate_check ) ) { // if WorldID exists in the database
-                                        // check if previously installed
-                                        $duplicate_check = $wpdb->get_var( "SELECT Source_Key FROM $table WHERE Source_Key = '$GEOID' AND WorldID = '$WorldID'" ); // if WorldID already exists, check if this record is the same source_key (geoid)
-                                        if ( is_null( $duplicate_check ) ) { // if the worldid is taken in the previous if, but the worldid and geoid combination are not found, then we need to find a new worldid
-                                            $WorldID         = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( strtoupper( $NAME ), 4, 1 );
-                                            $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE WorldID = '$WorldID' " );
-                                            if ( ! is_null( $duplicate_check ) ) {
-                                                $error = ' Duplicate with ' . mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( $COUNTY, - 1 ) . ' | ';
-                                            }
+                $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE WorldID = '$WorldID'" ); // check if WorldID already exists
+                if ( ! is_null( $duplicate_check ) ) { // if WorldID exists in the database
+                    // check if previously installed
+                    $duplicate_check = $wpdb->get_var( "SELECT Source_Key FROM $table WHERE Source_Key = '$GEOID' AND WorldID = '$WorldID'" ); // if WorldID already exists, check if this record is the same source_key (geoid)
+                    if ( is_null( $duplicate_check ) ) { // if the worldid is taken in the previous if, but the worldid and geoid combination are not found, then we need to find a new worldid
+                        $last_digit = substr( $WorldID, - 1 );
+                        $last_digit ++;
+                        if ( $last_digit >= 10 ) {
+                            $last_digit = 1;
+                        }
+                        $WorldID         = substr( $WorldID, 0, - 1 ) . $last_digit;
+                        $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE WorldID = '$WorldID' " );
+                        if ( ! is_null( $duplicate_check ) ) { // if WorldID exists in the database
+                            // check if previously installed
+                            $duplicate_check = $wpdb->get_var( "SELECT Source_Key FROM $table WHERE Source_Key = '$GEOID' AND WorldID = '$WorldID'" ); // if WorldID already exists, check if this record is the same source_key (geoid)
+                            if ( is_null( $duplicate_check ) ) { // if the worldid is taken in the previous if, but the worldid and geoid combination are not found, then we need to find a new worldid
+                                $WorldID         = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( strtoupper( $NAME ), 3, 1 );
+                                $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE WorldID = '$WorldID' " );
+                                if ( ! is_null( $duplicate_check ) ) { // if WorldID exists in the database
+                                    // check if previously installed
+                                    $duplicate_check = $wpdb->get_var( "SELECT Source_Key FROM $table WHERE Source_Key = '$GEOID' AND WorldID = '$WorldID'" ); // if WorldID already exists, check if this record is the same source_key (geoid)
+                                    if ( is_null( $duplicate_check ) ) { // if the worldid is taken in the previous if, but the worldid and geoid combination are not found, then we need to find a new worldid
+                                        $WorldID         = mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( strtoupper( $NAME ), 4, 1 );
+                                        $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE WorldID = '$WorldID' " );
+                                        if ( ! is_null( $duplicate_check ) ) {
+                                            $error = ' Duplicate with ' . mm_convert_usa_state_code( $STATE ) . '-' . substr( strtoupper( $NAME ), 0, 2 ) . substr( $COUNTY, - 1 ) . ' | ';
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                    $Adm2ID = $WorldID;
+                }
+                $Adm2ID = $WorldID;
         
         
-                    // Parse and create JSON coordinate record.
-                    if ( $place->Polygon ) {
-                        $ring    = [];
+                // Parse and create JSON coordinate record.
+                if ( $place->Polygon ) {
+                    $ring    = [];
+                    $polygon = [];
+                    $values  = explode( " ", $place->Polygon->outerBoundaryIs->LinearRing->coordinates );
+                    foreach ( $values as $value ) {
+                        $value  = substr( $value, 0, - 4 );
+                        $coords = explode( ",", $value );
+                
+                        $polygon[] = $coords;
+                
+                    }
+                    $ring[] = $polygon;
+                } elseif ( $place->MultiGeometry ) {
+                    $ring = [];
+                    foreach ( $place->MultiGeometry->Polygon as $single_polygon ) {
                         $polygon = [];
-                        $values  = explode( " ", $place->Polygon->outerBoundaryIs->LinearRing->coordinates );
+                        $values  = explode( " ", $single_polygon->outerBoundaryIs->LinearRing->coordinates );
                         foreach ( $values as $value ) {
                             $value  = substr( $value, 0, - 4 );
                             $coords = explode( ",", $value );
-                
+                    
                             $polygon[] = $coords;
-                
+                    
                         }
                         $ring[] = $polygon;
-                    } elseif ( $place->MultiGeometry ) {
-                        $ring = [];
-                        foreach ( $place->MultiGeometry->Polygon as $single_polygon ) {
-                            $polygon = [];
-                            $values  = explode( " ", $single_polygon->outerBoundaryIs->LinearRing->coordinates );
-                            foreach ( $values as $value ) {
-                                $value  = substr( $value, 0, - 4 );
-                                $coords = explode( ",", $value );
-                    
-                                $polygon[] = $coords;
-                    
-                            }
-                            $ring[] = $polygon;
-                        }
                     }
+                }
         
-                    $geometry = json_encode( $ring, JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK );
+                $geometry = json_encode( $ring, JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK );
         
-                    $center = mm_find_center( $geometry );
-                    $Cen_x  = $center[ 'Cen_x' ];
-                    $Cen_y  = $center[ 'Cen_y' ];
+                $center = mm_find_center( $geometry );
+                $Cen_x  = $center[ 'Cen_x' ];
+                $Cen_y  = $center[ 'Cen_y' ];
         
-                    // Create SQL and insert statement
-                    $insert_sql = "
+                // Create SQL and insert statement
+                $insert_sql = "
                     REPLACE INTO $table
                     (
                     WorldID,
@@ -503,12 +509,12 @@ class MM_Admin_Tab_Import
                     )
                     ";
         
-                    $wpdb->query( $insert_sql );
+                $wpdb->query( $insert_sql );
         
-                }
             }
+//            }
         }
-        
+    
         print_r( $wpdb->rows_affected . $wpdb->last_error );
         print $error;
         
@@ -530,48 +536,45 @@ class MM_Admin_Tab_Import
     
         $kml_object = simplexml_load_file( $directory->base_url . $file ); // get xml from amazon
         
-        $i = 'A01';
+        $i = 'AA1';
         
         
         // PARSE AND INSERT SOURCE
         foreach ($kml_object->Document->Folder->Placemark as $place) {
-    
+            
+            if($i == 'ZZ9') {
+                $i = 'A01';
+            } elseif ($i == 'Z99') {
+                $i = '1A1';
+            } elseif ($i == '9Z9') {
+                $i = '10A';
+            }
+            
             // Parse KML
             $STATE = $place->ExtendedData->SchemaData->SimpleData[ 0 ];
             $COUNTY = $place->ExtendedData->SchemaData->SimpleData[ 1 ];
             $TRACT = $place->ExtendedData->SchemaData->SimpleData[ 2 ];
             $GEOID = $place->ExtendedData->SchemaData->SimpleData[ 4 ];
             $NAME = $place->ExtendedData->SchemaData->SimpleData[ 5 ];
-    
-            // Lookup County WorldID Code by GEOID
-            $COUNTY_GEOID = $STATE . $COUNTY;
-            $COUNTY_WORLDID = $wpdb->get_results( "SELECT WorldID, Zone_Name FROM $table WHERE Source_Key = '$COUNTY_GEOID'", ARRAY_A );
-            // NOTE: lookup for the county id is based on the presence of the county with the
-            // correct geoid in the source_key
-            if(empty( $COUNTY_WORLDID )) {
-                wp_die( 'failed to get county_worldid' );
-                break;
-            }
             
-            // Parse and create JSON coordinate record.
-            if ( $place->Polygon ) {
-                $ring = [];
-                $polygon = [];
-                $values = explode( " ", $place->Polygon->outerBoundaryIs->LinearRing->coordinates );
-                foreach ( $values as $value ) {
-                    $value = substr( $value, 0, -4 );
-                    $coords = explode( ",", $value );
-            
-                    $polygon[] = $coords;
-            
+            $duplicate_check = $wpdb->get_var( "SELECT WorldID FROM $table WHERE Source_Key = '$GEOID'" );
+            if(!$duplicate_check) {
+        
+                // Lookup County WorldID Code by GEOID
+                $COUNTY_GEOID = $STATE . $COUNTY;
+                $COUNTY_WORLDID = $wpdb->get_results( "SELECT WorldID, Zone_Name FROM $table WHERE Source_Key = '$COUNTY_GEOID'", ARRAY_A );
+                // NOTE: lookup for the county id is based on the presence of the county with the
+                // correct geoid in the source_key
+                if(empty( $COUNTY_WORLDID )) {
+                    wp_die( 'failed to get county_worldid' );
+                    break;
                 }
-                $ring[] = $polygon;
-            }
-            elseif ( $place->MultiGeometry ) {
-                $ring = [];
-                foreach ( $place->MultiGeometry->Polygon as $single_polygon ) {
+                
+                // Parse and create JSON coordinate record.
+                if ( $place->Polygon ) {
+                    $ring = [];
                     $polygon = [];
-                    $values = explode( " ", $single_polygon->outerBoundaryIs->LinearRing->coordinates );
+                    $values = explode( " ", $place->Polygon->outerBoundaryIs->LinearRing->coordinates );
                     foreach ( $values as $value ) {
                         $value = substr( $value, 0, -4 );
                         $coords = explode( ",", $value );
@@ -581,99 +584,115 @@ class MM_Admin_Tab_Import
                     }
                     $ring[] = $polygon;
                 }
-            } // end if coordinate build
+                elseif ( $place->MultiGeometry ) {
+                    $ring = [];
+                    foreach ( $place->MultiGeometry->Polygon as $single_polygon ) {
+                        $polygon = [];
+                        $values = explode( " ", $single_polygon->outerBoundaryIs->LinearRing->coordinates );
+                        foreach ( $values as $value ) {
+                            $value = substr( $value, 0, -4 );
+                            $coords = explode( ",", $value );
+                    
+                            $polygon[] = $coords;
+                    
+                        }
+                        $ring[] = $polygon;
+                    }
+                } // end if coordinate build
+        
+                $geometry = json_encode( $ring, JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK );
+                
+                // Find center coordinates
+                $center = mm_find_center( $geometry );
+                $Cen_x = $center[ 'Cen_x' ];
+                $Cen_y = $center[ 'Cen_y' ];
+                
     
-            $geometry = json_encode( $ring, JSON_PRESERVE_ZERO_FRACTION | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK );
-            
-            // Find center coordinates
-            $center = mm_find_center( $geometry );
-            $Cen_x = $center[ 'Cen_x' ];
-            $Cen_y = $center[ 'Cen_y' ];
-            
-
-            // Create the record array
-            $WorldID = $COUNTY_WORLDID[0]['WorldID'] . "-" . $i;
-            $Zone_Name = esc_attr( "Tract " . $TRACT . " of " . $COUNTY_WORLDID[0]['Zone_Name'] . ' County' );
-            $CntyID = 'USA';
-            $Cnty_Name = 'United States of America';
-            $Adm1ID = mm_convert_usa_state_code( $STATE );
-            $Adm1_Name = esc_attr( mm_convert_usa_state_name( $STATE ) );
-            $Adm2ID = $COUNTY_WORLDID[0]['WorldID'];
-            $Adm2_Name = esc_attr( $COUNTY_WORLDID[0]['Zone_Name'] );
-            $Adm3ID = ''; // added later
-            $Adm3_Name = ''; // added later
-            $Adm4ID = '';
-            $Adm4_Name = '';
-            $World = 'C';
-            $Population = '';
-            $Shape_Leng = '';
-            $Region = 'North America Region' ;
-            $Field = 'The Americas Field';
-            $Notes = $file;
-            $Last_Sync = date( 'Y-m-d H:i:s', time() );
-            $Sync_Source =  'US Census KML' ;
-            $Source_Key = $GEOID;
-
-
-            // Create SQL and insert statement
-            $insert_sql = "
-            REPLACE INTO $table
-            (
-            WorldID,
-            Zone_Name,
-            CntyID,
-            Cnty_Name,
-            Adm1ID,
-            Adm1_Name,
-            Adm2ID,
-            Adm2_Name,
-            Adm3ID,
-            Adm3_Name,
-            Adm4ID,
-            Adm4_Name,
-            World,
-            Population,
-            Shape_Leng,
-            Cen_x,
-            Cen_y,
-            Region,
-            Field,
-            geometry,
-            Notes,
-            Last_Sync,
-            Sync_Source,
-            Source_Key
-            )
-            VALUES
-            (
-            '$WorldID',
-            '$Zone_Name',
-            '$CntyID',
-            '$Cnty_Name',
-            '$Adm1ID',
-            '$Adm1_Name',
-            '$Adm2ID',
-            '$Adm2_Name',
-            '$Adm3ID',
-            '$Adm3_Name',
-            '$Adm4ID',
-            '$Adm4_Name',
-            '$World',
-            '$Population',
-            '$Shape_Leng',
-            '$Cen_x',
-            '$Cen_y',
-            '$Region',
-            '$Field',
-            '$geometry',
-            '$Notes',
-            '$Last_Sync',
-            '$Sync_Source',
-            '$Source_Key'
-            )
-            ";
-
-            $wpdb->query( $insert_sql );
+                // Create the record array
+                $WorldID = $COUNTY_WORLDID[0]['WorldID'] . "-" . $i;
+                $Zone_Name = esc_attr( "Tract " . $TRACT . " of " . $COUNTY_WORLDID[0]['Zone_Name'] . ' County' );
+                $CntyID = 'USA';
+                $Cnty_Name = 'United States of America';
+                $Adm1ID = mm_convert_usa_state_code( $STATE );
+                $Adm1_Name = esc_attr( mm_convert_usa_state_name( $STATE ) );
+                $Adm2ID = $COUNTY_WORLDID[0]['WorldID'];
+                $Adm2_Name = esc_attr( $COUNTY_WORLDID[0]['Zone_Name'] );
+                $Adm3ID = ''; // added later
+                $Adm3_Name = ''; // added later
+                $Adm4ID = '';
+                $Adm4_Name = '';
+                $World = 'C';
+                $Population = '';
+                $Shape_Leng = '';
+                $Region = 'North America Region' ;
+                $Field = 'The Americas Field';
+                $Notes = $file;
+                $Last_Sync = date( 'Y-m-d H:i:s', time() );
+                $Sync_Source =  'US Census KML' ;
+                $Source_Key = $GEOID;
+    
+    
+                // Create SQL and insert statement
+                $insert_sql = "
+                REPLACE INTO $table
+                (
+                WorldID,
+                Zone_Name,
+                CntyID,
+                Cnty_Name,
+                Adm1ID,
+                Adm1_Name,
+                Adm2ID,
+                Adm2_Name,
+                Adm3ID,
+                Adm3_Name,
+                Adm4ID,
+                Adm4_Name,
+                World,
+                Population,
+                Shape_Leng,
+                Cen_x,
+                Cen_y,
+                Region,
+                Field,
+                geometry,
+                Notes,
+                Last_Sync,
+                Sync_Source,
+                Source_Key
+                )
+                VALUES
+                (
+                '$WorldID',
+                '$Zone_Name',
+                '$CntyID',
+                '$Cnty_Name',
+                '$Adm1ID',
+                '$Adm1_Name',
+                '$Adm2ID',
+                '$Adm2_Name',
+                '$Adm3ID',
+                '$Adm3_Name',
+                '$Adm4ID',
+                '$Adm4_Name',
+                '$World',
+                '$Population',
+                '$Shape_Leng',
+                '$Cen_x',
+                '$Cen_y',
+                '$Region',
+                '$Field',
+                '$geometry',
+                '$Notes',
+                '$Last_Sync',
+                '$Sync_Source',
+                '$Source_Key'
+                )
+                ";
+    
+                $wpdb->query( $insert_sql );
+                
+            }
             
             $i++;
 
@@ -1240,10 +1259,11 @@ class MM_Admin_Tab_Import
         }
     }
     
-    public function install_gdam_adm2_kml() {
+    public function install_gdam_adm2_kml( $field_name = 'TUN_Adm2.kml' ) {
         // SET VARIABLES
-        $kml = 'TUN_Adm2.kml';
         global $wpdb;
+        $kml = $field_name;
+        
         $table = $wpdb->mm;
         $ring = [];
         $error = '';

@@ -47,13 +47,22 @@ class MM_Admin_Tab_Stats
                     <thead><th>Stats</th></thead>
                     <tbody><tr><td>';
         
-        $country_stats = ml_get_country_stats();
+        $country_stats = mm_get_country_stats();
         foreach ( $country_stats as $key => $value ) {
             $html .= $key . ' : ' . $value . '<br>';
         }
         
-        $html .= '</td></tr><tr><td>';
-        
+        $html .= '</td></tr></tbody></table><br>';
+    
+        $html .= '<table class="widefat striped">
+                    <thead><th>Stats</th></thead>
+                    <tbody><tr><td>';
+    
+        $country_stats = mm_get_usa_stats();
+        foreach ( $country_stats as $key => $value ) {
+            $html .= $key . ' : ' . $value . '<br>';
+        }
+    
         $html .= '</td></tr></tbody></table></div>';
         
         echo $html;

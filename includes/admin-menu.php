@@ -76,7 +76,7 @@ class MM_Admin_Menu {
          * Begin Header & Tab Bar
          */
         if (isset( $_GET["tab"] )) {$tab = $_GET["tab"];
-        } else {$tab = 'stats';}
+        } else {$tab = 'convert';}
 
         $tab_link_pre = '<a href="admin.php?page=movement_mapping&tab=';
         $tab_link_post = '" class="nav-tab ';
@@ -85,6 +85,10 @@ class MM_Admin_Menu {
             <h2>Movement Mapping Settings</h2>
             <h2 class="nav-tab-wrapper">';
         
+        $html .= $tab_link_pre . 'convert' . $tab_link_post;
+        if ($tab == 'convert' ) {$html .= 'nav-tab-active';}
+        $html .= '">Convert</a>';
+        
         $html .= $tab_link_pre . 'stats' . $tab_link_post;
         if ($tab == 'stats' ) {$html .= 'nav-tab-active';}
         $html .= '">Stats</a>';
@@ -92,11 +96,6 @@ class MM_Admin_Menu {
 //        $html .= $tab_link_pre . 'settings' . $tab_link_post;
 //        if ($tab == 'settings' || !isset( $tab )) {$html .= 'nav-tab-active';}
 //        $html .= '">Settings</a>';
-
-        $html .= $tab_link_pre . 'import' . $tab_link_post;
-        if ($tab == 'import' ) {$html .= 'nav-tab-active';}
-        $html .= '">Import</a>';
-    
 
         $html .= '</h2>';
 
@@ -110,7 +109,7 @@ class MM_Admin_Menu {
          */
         switch ($tab) {
 
-            case "import":
+            case "convert":
                 require_once( 'admin-tab-import.php' );
                 $class_object = new MM_Admin_Tab_Import();
                 $html .= '' . $class_object->page_contents();
