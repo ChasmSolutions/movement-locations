@@ -44,7 +44,7 @@ class MM_Admin_Tab_Stats
         $html .= '<div class="wrap">';
     
         $html .= '<table class="widefat striped">
-                    <thead><th>Stats</th></thead>
+                    <thead><th>Global (_mm table)</th></thead>
                     <tbody><tr><td>';
         
         $country_stats = mm_get_country_stats();
@@ -55,7 +55,7 @@ class MM_Admin_Tab_Stats
         $html .= '</td></tr></tbody></table><br>';
     
         $html .= '<table class="widefat striped">
-                    <thead><th>Stats</th></thead>
+                    <thead><th>USA (_mm_usa table)</th></thead>
                     <tbody><tr><td>';
     
         $country_stats = mm_get_usa_stats();
