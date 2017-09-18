@@ -44,7 +44,7 @@ class MM_Controller {
         }
         
         // query $cnty_id and filter for admin1
-        $data = $wpdb->get_results( "SELECT * FROM $wpdb->mm_usa $where", ARRAY_A );
+        $data = $wpdb->get_results( "SELECT * FROM $wpdb->mm $where", ARRAY_A );
     
         $geojson = [
             'type' => 'FeatureCollection',
@@ -101,14 +101,38 @@ class MM_Controller {
         $count = [];
         
         // Total number of admin1
-        $count['admin1'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm_usa WHERE CntyID = '$cnty_id' AND WorldID LIKE '___-___'" );
+        $count['admin1'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE CntyID = '$cnty_id' AND WorldID LIKE '___-___'" );
     
         // Total number of admin2
-        $count['admin2'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm_usa WHERE CntyID = '$cnty_id' AND WorldID LIKE '___-___-___'" );
+        $count['admin2'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE CntyID = '$cnty_id' AND WorldID LIKE '___-___-___'" );
     
         // Total number of admin3
-        $count['admin3'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm_usa WHERE CntyID = '$cnty_id' AND WorldID LIKE '___-___-___-___'" );
+        $count['admin3'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE CntyID = '$cnty_id' AND WorldID LIKE '___-___-___-___'" );
     
+        // Total number of admin4
+        $count['admin4'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm WHERE CntyID = '$cnty_id' AND WorldID LIKE '___-___-___-___-___'" );
+        
+        return [
+            "adm1_count" => $count['admin1'],
+            "adm2_count" => $count['admin2'],
+            "adm3_count" => $count['admin3'],
+            "adm4_count" => $count['admin4'],
+        ];
+    }
+    
+    public static function get_summary_usa( $cnty_id ) {
+        global $wpdb;
+        $count = [];
+        
+        // Total number of admin1
+        $count['admin1'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm_usa WHERE CntyID = '$cnty_id' AND WorldID LIKE '___-___'" );
+        
+        // Total number of admin2
+        $count['admin2'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm_usa WHERE CntyID = '$cnty_id' AND WorldID LIKE '___-___-___'" );
+        
+        // Total number of admin3
+        $count['admin3'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm_usa WHERE CntyID = '$cnty_id' AND WorldID LIKE '___-___-___-___'" );
+        
         // Total number of admin4
         $count['admin4'] = $wpdb->get_var( "SELECT count(*) FROM $wpdb->mm_usa WHERE CntyID = '$cnty_id' AND WorldID LIKE '___-___-___-___-___'" );
         
