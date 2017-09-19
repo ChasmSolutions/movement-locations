@@ -58,9 +58,9 @@ class MM_Controller {
                     'type' => 'Feature',
                     'geometry' => [
                         'type' => 'Polygon',
-                        'coordinates' =>
-                            json_decode( $record['geometry'] )
-                        
+                        'coordinates' => [
+                            array_reverse ( json_decode( $record['geometry'] ))
+                            ]
                     ],
                     'properties' => [
                         'WorldID' => $record['WorldID'],
@@ -191,9 +191,9 @@ class MM_Controller {
                     'type' => 'Feature',
                     'geometry' => [
                         'type' => 'Polygon',
-                        'coordinates' =>
-                            json_decode( $record['geometry'] )
-                
+                        'coordinates' => [
+                            array_reverse ( json_decode( $record['geometry'] ) )
+                            ]
                     ],
                     'properties' => [
                         'WorldID' => $record['WorldID'],
