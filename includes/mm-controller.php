@@ -59,7 +59,7 @@ class MM_Controller {
                     'geometry' => [
                         'type' => 'Polygon',
                         'coordinates' => [
-                            array_reverse ( json_decode( $record['geometry'] ))
+                            array_reverse( json_decode( $record['geometry'] ) )
                             ]
                     ],
                     'properties' => [
@@ -192,7 +192,7 @@ class MM_Controller {
                     'geometry' => [
                         'type' => 'Polygon',
                         'coordinates' => [
-                            array_reverse ( json_decode( $record['geometry'] ) )
+                            array_reverse( json_decode( $record['geometry'] ) )
                             ]
                     ],
                     'properties' => [
