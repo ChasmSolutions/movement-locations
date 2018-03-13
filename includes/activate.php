@@ -12,8 +12,8 @@
 
 
 class MM_Activate {
-    
-    
+
+
     /**
      * Activities to run during installation.
      *
@@ -23,7 +23,7 @@ class MM_Activate {
      */
     public static function activate( $network_wide ) {
         global $wpdb;
-        
+
         /**
          * Activate database creation for Disciple Tools Activity logs
          *
@@ -41,7 +41,7 @@ class MM_Activate {
             self::create_tables( movement_mapping()->version );
         }
     }
-    
+
     /**
      * Creating tables whenever a new blog is created
      *
@@ -53,20 +53,25 @@ class MM_Activate {
      * @param $meta
      */
     public static function on_create_blog( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
-        
+
         if ( is_plugin_active_for_network( 'movement-mapping/movement-mapping.php' ) ) {
             switch_to_blog( $blog_id );
             self::create_tables( movement_mapping()->version );
             restore_current_blog();
         }
     }
-    
+
+    /**
+     * @param $tables
+     *
+     * @return array
+     */
     public static function on_delete_blog( $tables ) {
         global $wpdb;
         $tables[] = $wpdb->prefix . 'mm';
         return $tables;
     }
-    
+
     /**
      * Creates the tables for the activity and report logs.
      *
@@ -74,9 +79,9 @@ class MM_Activate {
      */
     protected static function create_tables( $version ) {
         global $wpdb;
-        
+
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-        
+
         /* Movement Mapping */
         $table_name = $wpdb->prefix . 'mm';
         if( $wpdb->get_var( "show tables like '{$table_name}'" ) != $table_name ) {
@@ -107,12 +112,12 @@ class MM_Activate {
                       `Source_Key` varchar(25) CHARACTER SET utf8mb4 DEFAULT NULL,
                       PRIMARY KEY (`WorldID`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;";
-    
+
             dbDelta( $sql1 );
-    
+
             update_option( 'mm_db_version', $version );
         }
-    
+
             /* Movement Mapping USA */
             $table_name = $wpdb->prefix . 'mm_usa';
         if( $wpdb->get_var( "show tables like '{$table_name}'" ) != $table_name ) {
@@ -143,12 +148,12 @@ class MM_Activate {
                       `Source_Key` varchar(25) CHARACTER SET utf8mb4 DEFAULT NULL,
                       PRIMARY KEY (`WorldID`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;";
-        
+
             dbDelta( $sql2 );
-        
+
             update_option( 'mm_usa_db_version', $version );
-                
+
         }
     }
-    
+
 }
